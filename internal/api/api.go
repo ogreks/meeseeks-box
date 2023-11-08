@@ -18,13 +18,13 @@ type Api interface {
 	Start(ctx context.Context) error
 }
 
-type api struct {
+type server struct {
 	address string
 	port    int
 }
 
 func NewApi(address string, port int) Api {
-	return &api{
+	return &server{
 		address: address,
 		port:    port,
 	}
@@ -41,7 +41,7 @@ func initLogger() *zap.Logger {
 	return l
 }
 
-func (a *api) Start(ctx context.Context) error {
+func (a *server) Start(ctx context.Context) error {
 	l := initLogger()
 
 	server := InitApiServer()
