@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/ogreks/meeseeks-box/config"
 	"github.com/ogreks/meeseeks-box/pkg/logger"
 	"github.com/ogreks/meeseeks-box/pkg/utils"
 	"go.uber.org/zap"
@@ -19,10 +20,10 @@ type Api interface {
 
 type api struct {
 	address string
-	port    string
+	port    int
 }
 
-func NewApi(address, port string) Api {
+func NewApi(address string, port int) Api {
 	return &api{
 		address: address,
 		port:    port,
@@ -44,6 +45,10 @@ func (a *api) Start(ctx context.Context) error {
 	l := initLogger()
 
 	server := InitApiServer()
+
+	if config.GetConfig().GetServer().Debug {
+		gin.SetMode(gin.DebugMode)
+	}
 
 	server.GET("/hello", func(ctx *gin.Context) {
 		netAddr, err := net.InterfaceAddrs()
@@ -73,8 +78,9 @@ func (a *api) Start(ctx context.Context) error {
 
 	return utils.Run(ctx, l, func(ctx context.Context) (func(), error) {
 		httpSvc := &http.Server{
-			Addr:    fmt.Sprintf("%s:%s", a.address, a.port),
-			Handler: server,
+			Addr:        fmt.Sprintf("%s:%d", a.address, a.port),
+			Handler:     server,
+			ReadTimeout: time.Second * time.Duration(config.GetConfig().GetServer().ReadTimeout),
 		}
 
 		go func() {

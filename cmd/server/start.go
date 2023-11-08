@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
+	"github.com/ogreks/meeseeks-box/config"
 	"github.com/ogreks/meeseeks-box/internal/api"
 	"github.com/ogreks/meeseeks-box/pkg/command"
 	"github.com/spf13/cobra"
@@ -15,6 +16,7 @@ import (
 type StartServer struct {
 	command.BaseCommand
 	daemon bool
+	config string
 }
 
 func NewStartServer() *StartServer {
@@ -28,15 +30,34 @@ func NewStartServer() *StartServer {
 		Aliases: []string{"s"},
 	}
 
-	startServerCmd.Flags().BoolVarP(&startServer.daemon, "daemon", "d", false, "daemon")
-
 	startServer.SetCommand(startServerCmd)
+	startServer.initVars()
 	return startServer
 }
 
-func (s *StartServer) runCommand(cmd *cobra.Command, args []string) error {
-	server := api.NewApi("localhost", "8000")
+func (s *StartServer) initVars() {
+	startServerCmd := s.GetCommand()
+	// flags: config or -c
+	startServerCmd.Flags().StringVarP(
+		&s.config, "config", "c", "",
+		"runtime configuration files or directory (default: workdir config/dev.yaml)",
+	)
+	// flags: daemon or -d
+	startServerCmd.Flags().BoolVarP(
+		&s.daemon, "daemon", "d", false,
+		"start daemon mode (default: false)",
+	)
+}
 
+func (s *StartServer) runCommand(cmd *cobra.Command, args []string) error {
+	configFile := s.config
+	if configFile == "" {
+		configFile = app.DefaultConfigFile
+	}
+
+	cfg := config.InitConfig(configFile)
+
+	server := api.NewApi(cfg.GetServer().Addr, cfg.GetServer().Port)
 	if s.daemon {
 		bin, err := filepath.Abs(os.Args[0])
 		if err != nil {
@@ -54,7 +75,7 @@ func (s *StartServer) runCommand(cmd *cobra.Command, args []string) error {
 		}
 
 		pid := execCommand.Process.Pid
-		_ = os.WriteFile(fmt.Sprintf("%s.lock", "meeseeks-box"), []byte(fmt.Sprintf("%d", pid)), 0666)
+		_ = os.WriteFile(fmt.Sprintf("%s.lock", app.Name), []byte(fmt.Sprintf("%d", pid)), 0666)
 		fmt.Printf("service %s daemon thread started with pid %d \n", "meeseeks-box", pid)
 		os.Exit(0)
 	}

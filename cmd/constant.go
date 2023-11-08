@@ -6,8 +6,9 @@ var (
 )
 
 const (
-	ProjectName = "meeseeks-box"
-	// @see https://patorjk.com/software/taag/#p=display&f=Slant&t=meeseeks%20box
+	ProjectName = "meeseeks"
+
+	// TEMPLATE @see https://patorjk.com/software/taag/#p=display&f=Slant&t=meeseeks%20box
 	TEMPLATE = `
                                        __           __              
    ____ ___  ___  ___  ________  ___  / /_______   / /_  ____  _  __

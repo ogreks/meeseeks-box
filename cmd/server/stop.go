@@ -28,7 +28,7 @@ func NewStopServer() *StopServer {
 }
 
 func (s *StopServer) runCommand(cmd *cobra.Command, args []string) error {
-	lockFile := fmt.Sprintf("%s.lock", "meeseeks-box")
+	lockFile := fmt.Sprintf("%s.lock", app.Name)
 	pid, err := os.ReadFile(lockFile)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {

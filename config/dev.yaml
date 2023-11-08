@@ -1,2 +1,6 @@
-db:
-  dsn: "root:root@tcp(localhost:3306)/test?charset=utf8mb4&parseTime=True&loc=Local"
+server:
+  debug: true
+  addr: localhost
+  port: 8000
+  read_timeout: 60
+  max_conn: 1000
