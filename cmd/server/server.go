@@ -20,12 +20,12 @@ func NewServerCommand() *Server {
 	}
 
 	serverCmd.AddCommand(NewStartServer().GetCommand())
+	serverCmd.AddCommand(NewStopServer().GetCommand())
 
 	s.SetCommand(serverCmd)
 	return s
 }
 
 func (s *Server) runCommand(cmd *cobra.Command, args []string) error {
-	cmd.Help()
-	return nil
+	return cmd.Help()
 }

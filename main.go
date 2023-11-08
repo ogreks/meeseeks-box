@@ -9,6 +9,8 @@ import (
 // @name Authorization
 // @schemes http https ws wss
 // @basePath /
+// @license.name MIT
+// @license.url https://github.com/ogreks/meeseeks-box/blob/main/LICENSE
 
 func main() {
 	cmd.Execute()

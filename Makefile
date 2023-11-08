@@ -26,3 +26,8 @@ tidy:
 .PHONY: fmt
 fmt:
 	@sh ./script/fmt.sh
+
+## api-wire: generate api wire code...
+.PHONY: api-wire
+api-wire:
+	cd $(shell pwd)/internal/api && wire

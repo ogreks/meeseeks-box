@@ -88,7 +88,7 @@ func WithDisableConsole() Option {
 	}
 }
 
-func NewJsonLogger(opts ...Option) *zap.Logger {
+func NewJsonLogger(opts ...Option) (*zap.Logger, error) {
 	opt := &option{
 		level:      DefaultLevel,
 		timeLayout: DefaultTimeLayout,
@@ -169,5 +169,5 @@ func NewJsonLogger(opts ...Option) *zap.Logger {
 		return true
 	})
 
-	return logger
+	return logger, nil
 }

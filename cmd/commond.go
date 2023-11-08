@@ -60,8 +60,8 @@ func (b *commandsBuilder) addAll() *commandsBuilder {
 }
 
 func (b *commandsBuilder) builder() *commandsBuilder {
-	for _, command := range b.commands {
-		b.rootCommand.AddCommand(command.GetCommand())
+	for _, c := range b.commands {
+		b.rootCommand.AddCommand(c.GetCommand())
 	}
 	return b
 }

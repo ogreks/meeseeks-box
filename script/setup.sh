@@ -1,7 +1,13 @@
 #!/bin/bash
 
-echo "安装 golangci-lint..."
-go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.52.2
+echo "install golangci-lint..."
+go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.55.2
 
-echo "安装 goimports..."
+echo "install goimports..."
 go install golang.org/x/tools/cmd/goimports@latest
+
+echo "install wire..."
+go install github.com/google/wire/cmd/wire@latest
+
+## exec wire
+make api-wire
