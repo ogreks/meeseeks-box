@@ -20,3 +20,7 @@ type AccountConnectModel struct {
 	MoreJson             string    `gorm:"column:more_json;type:json;default:null;comment:扩展字段"`
 	RefreshTokenExpireAt time.Time `gorm:"refresh_token_expire_at;type:datetime;default:null;comment:授权RefreshToken有效期"`
 }
+
+func (a *AccountConnectModel) TableName() string {
+	return "account_connects"
+}

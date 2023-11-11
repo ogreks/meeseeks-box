@@ -20,3 +20,7 @@ type UserModel struct {
 	WaitDelete    uint8     `gorm:"column:wait_delete;type:tinyint(1);default:0;comment:是否等待删除0.否/1.是/2.永久"`
 	WaitDeleteAt  time.Time `gorm:"column:wait_delete_at;type:datetime;default:null;comment:等待删除时间"`
 }
+
+func (u *UserModel) TableName() string {
+	return "users"
+}

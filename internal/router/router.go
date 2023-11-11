@@ -6,8 +6,12 @@ import (
 )
 
 type Router interface {
-	Register(r *gin.Engine, logger *zap.Logger) Router
+	Register(r *gin.Engine) Router
 }
 
-func InitRouter(g *gin.Engine, log *zap.Logger) {
+func InitRouter(g *gin.Engine, log *zap.Logger) error {
+
+	
+
+	return nil
 }
