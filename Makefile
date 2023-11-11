@@ -30,4 +30,4 @@ fmt:
 ## api-wire: generate api wire code...
 .PHONY: api-wire
 api-wire:
-	cd $(shell pwd)/internal/api && wire
+	cd $(shell pwd)/internal/bootstrap && wire

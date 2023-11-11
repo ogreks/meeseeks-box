@@ -1,17 +1,18 @@
-package api
+package bootstrap
 
 import (
 	"context"
 	"errors"
 	"fmt"
+	"net"
+	"net/http"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/ogreks/meeseeks-box/config"
 	"github.com/ogreks/meeseeks-box/pkg/logger"
 	"github.com/ogreks/meeseeks-box/pkg/utils"
 	"go.uber.org/zap"
-	"net"
-	"net/http"
-	"time"
 )
 
 type Api interface {

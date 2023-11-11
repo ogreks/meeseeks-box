@@ -18,9 +18,18 @@ type Database struct {
 	// 数据库连接
 	Source string `mapstructure:"source"`
 	// 数据库最大空闲连接数
-	MaxIdleConns int `mapstructure:"max_idle_conns"`
 	// 数据库最大打开连接数
-	MaxOpenConns int `mapstructure:"max_open_conns"`
+	MaxOpenConn int `mapstructure:"max_open_conn"`
+
+	MaxIdleConn int `mapstructure:"max_idle_conn"`
+
+	MaxLifetime int `mapstructure:"max_life_time"`
+
+	Mode int `mapstructure:"mode"`
+
+	Prefix string `mapstruture:"prefix"`
+
+	Charset string `mapstructure:"charset"`
 }
 
 type Server struct {

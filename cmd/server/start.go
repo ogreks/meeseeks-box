@@ -3,14 +3,15 @@ package server
 import (
 	"context"
 	"fmt"
-	"github.com/ogreks/meeseeks-box/config"
-	"github.com/ogreks/meeseeks-box/internal/api"
-	"github.com/ogreks/meeseeks-box/pkg/command"
-	"github.com/spf13/cobra"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/ogreks/meeseeks-box/config"
+	api "github.com/ogreks/meeseeks-box/internal/bootstrap"
+	"github.com/ogreks/meeseeks-box/pkg/command"
+	"github.com/spf13/cobra"
 )
 
 type StartServer struct {
@@ -65,7 +66,7 @@ func (s *StartServer) runCommand(cmd *cobra.Command, args []string) error {
 			return err
 		}
 
-		args := []string{"server", "start"}
+		args := []string{"server", "start", "-c", configFile}
 		fmt.Printf("execute command: %s %s \n", bin, strings.Join(args, " "))
 		execCommand := exec.Command(bin, args...)
 		err = execCommand.Start()

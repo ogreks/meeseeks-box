@@ -4,16 +4,19 @@
 //go:build !wireinject
 // +build !wireinject
 
-package api
+package bootstrap
 
 import (
 	"github.com/gin-gonic/gin"
-	api2 "github.com/ogreks/meeseeks-box/internal/ioc/api"
+	"github.com/ogreks/meeseeks-box/internal/ioc"
+	"github.com/ogreks/meeseeks-box/internal/ioc/api"
 )
 
 // Injectors from wire.go:
 
 func InitApiServer() *gin.Engine {
-	engine := api2.InitApiServer()
+	config := ioc.InitConfig()
+	repo := ioc.InitORM(config)
+	engine := api.InitApiServer(repo)
 	return engine
 }
