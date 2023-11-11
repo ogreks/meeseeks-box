@@ -14,6 +14,8 @@ func InitApiServer() *gin.Engine {
 	wire.Build(
 		// init config
 		ioc.InitConfig,
+		// init logger
+		ioc.InitLogger,
 		// init orm
 		ioc.InitORM,
 		// init api server

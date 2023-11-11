@@ -1,6 +1,21 @@
+# config.Config
+
+# config.Server
 server:
   debug: true
   addr: localhost
   port: 8000
   read_timeout: 60
   max_conn: 1000
+
+# config.Database
+database:
+  mode: 1
+  driver: mysql
+  prefix: meeseeks
+  charset: utf8mb4
+  max_idle_conn: 100
+  max_open_conn: 100
+  conn_max_lifetime: 60
+  source: root:root@tcp(localhost:13316)/webook?charset=utf8mb4&parseTime=True&loc=Local
+

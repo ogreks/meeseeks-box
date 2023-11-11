@@ -17,39 +17,39 @@ type MysqlRepo struct {
 }
 
 func NewMysqlRepo(cfg config.Database) orm.Repo {
-	mysql := &MysqlRepo{}
+	repo := &MysqlRepo{}
 
-	mysql.SetConfig(cfg)
+	repo.SetConfig(cfg)
 
-	return mysql
+	return repo
 }
 
 func (m *MysqlRepo) Connection() error {
-	config := m.GetConfig()
-	driver, err := gorm.Open(mysql.Open(config.Source), &gorm.Config{
+	cfg := m.GetConfig()
+	driver, err := gorm.Open(mysql.Open(cfg.Source), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: true,
-			TablePrefix:   config.Prefix,
+			TablePrefix:   cfg.Prefix,
 		},
-		Logger: logger.Default.LogMode(logger.LogLevel(config.Mode)),
+		Logger: logger.Default.LogMode(logger.LogLevel(cfg.Mode)),
 	})
 
 	if err != nil {
 		return err
 	}
 
-	driver.Set("gorm:table_options", fmt.Sprintf("CHARSET=%s", config.Charset))
+	driver.Set("gorm:table_options", fmt.Sprintf("CHARSET=%s", cfg.Charset))
 
 	db, err := driver.DB()
 	if err != nil {
 		return err
 	}
 
-	db.SetMaxOpenConns(config.MaxOpenConn)
+	db.SetMaxOpenConns(cfg.MaxOpenConn)
 
-	db.SetMaxIdleConns(config.MaxIdleConn)
+	db.SetMaxIdleConns(cfg.MaxIdleConn)
 
-	db.SetConnMaxLifetime(time.Minute * time.Duration(config.MaxLifetime))
+	db.SetConnMaxLifetime(time.Minute * time.Duration(cfg.MaxLifetime))
 
 	m.SetDB(driver)
 

@@ -3,7 +3,6 @@ package user
 import (
 	"github.com/gin-gonic/gin"
 	userHandler "github.com/ogreks/meeseeks-box/internal/api/user"
-	"github.com/ogreks/meeseeks-box/internal/router"
 	"go.uber.org/zap"
 )
 
@@ -17,7 +16,7 @@ func NewUserRouter(logger *zap.Logger) *UserRouter {
 	}
 }
 
-func (uRoute *UserRouter) Register(r *gin.Engine) router.Router {
+func (uRoute *UserRouter) Register(r *gin.Engine) *UserRouter {
 	userRouter := r.Group("/api/user")
 	{
 		userRouter.POST("/login", uRoute.userHandle.Login)

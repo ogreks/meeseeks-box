@@ -17,6 +17,7 @@ import (
 func InitApiServer() *gin.Engine {
 	config := ioc.InitConfig()
 	repo := ioc.InitORM(config)
-	engine := api.InitApiServer(repo)
+	logger := ioc.InitLogger()
+	engine := api.InitApiServer(repo, logger)
 	return engine
 }
