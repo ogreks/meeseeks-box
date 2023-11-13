@@ -10,6 +10,9 @@ var _ Handler = (*handler)(nil)
 type Handler interface {
 	i()
 
+	// Login user login
+	// @Tags API.User
+	// @Router /api/user/login [post]
 	Login(*gin.Context)
 }
 
