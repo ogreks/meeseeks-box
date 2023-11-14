@@ -25,3 +25,8 @@ go.work
 .vscode
 .idea
 log/*
+
+# environment
+docker-compose.yaml
+config.yaml
+gorm.gen.yaml

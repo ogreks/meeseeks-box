@@ -1,4 +1,4 @@
-package config
+package configs
 
 import (
 	"bytes"
@@ -15,6 +15,7 @@ type Config struct {
 	Server   Server   `mapstructure:"server"`
 	Database Database `mapstructure:"database"`
 	Log      Log      `mapstructure:"log"`
+	Jwt      Jwt      `mapstructure:"jwt"`
 }
 
 func (c *Config) GetServer() Server {
@@ -27,6 +28,25 @@ func (c *Config) GetDatabase() Database {
 
 func (c *Config) GetLog() Log {
 	return c.Log
+}
+
+// initDefault 初始化默认配置
+func initDefaultConfig() {
+	if cfg.Database.LogPath == "" {
+		cfg.Database.LogPath = "./log/sql.log"
+	}
+
+	if cfg.Jwt.Issuer == "" {
+		cfg.Jwt.Issuer = "meeseeks-box"
+	}
+
+	if cfg.Jwt.HeaderKey == "" {
+		cfg.Jwt.HeaderKey = RequestHeaderJWTKey
+	}
+
+	if cfg.Jwt.Expire == 0 {
+		cfg.Jwt.Expire = RequestHeaderJWTExpireTime
+	}
 }
 
 func InitConfig(configFile string) *Config {
@@ -44,6 +64,8 @@ func InitConfig(configFile string) *Config {
 	if err := viper.Unmarshal(cfg); err != nil {
 		panic(err)
 	}
+
+	initDefaultConfig()
 
 	cfg.Watch(configFile)
 
@@ -76,6 +98,7 @@ func (c *Config) Watch(configurePath string) {
 		if err := viper.Unmarshal(cfg); err != nil {
 			panic(err)
 		}
+		initDefaultConfig()
 	})
 }
 

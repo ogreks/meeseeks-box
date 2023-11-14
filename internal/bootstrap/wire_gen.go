@@ -18,6 +18,8 @@ func InitApiServer() *gin.Engine {
 	config := ioc.InitConfig()
 	repo := ioc.InitORM(config)
 	logger := ioc.InitLogger()
-	engine := api.InitApiServer(repo, logger)
+	v := api.InitMiddleware(logger)
+	jwtMiddleware := api.InitJwtMiddleware(config)
+	engine := api.InitApiServer(repo, logger, v, jwtMiddleware)
 	return engine
 }

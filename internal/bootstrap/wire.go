@@ -12,12 +12,15 @@ import (
 
 func InitApiServer() *gin.Engine {
 	wire.Build(
-		// init config
+		// init configs
 		ioc.InitConfig,
 		// init logger
 		ioc.InitLogger,
 		// init orm
 		ioc.InitORM,
+		// init middleware
+		iocApi.InitMiddleware,
+		iocApi.InitJwtMiddleware,
 		// init api server
 		iocApi.InitApiServer,
 	)

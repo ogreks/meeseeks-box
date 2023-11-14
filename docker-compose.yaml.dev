@@ -1,0 +1,14 @@
+version: '3'
+services:
+  db:
+    image: mysql:8.2.0
+    container_name: db
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: meeseeks
+      MYSQL_USER: meeseeks
+      MYSQL_PASSWORD: meeseeks
+    ports:
+      - 3306:3306

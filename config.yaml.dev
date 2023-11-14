@@ -12,10 +12,11 @@ server:
 database:
   mode: 1
   driver: mysql
-  prefix: meeseeks
+  prefix: m_
   charset: utf8mb4
   max_idle_conn: 100
   max_open_conn: 100
   conn_max_lifetime: 60
-  source: root:root@tcp(localhost:13316)/webook?charset=utf8mb4&parseTime=True&loc=Local
+  source: meeseeks:meeseeks@tcp(localhost:13306)/meeseeks?charset=utf8mb4&parseTime=True&loc=Local
+  log_path: ./log/sql.log
 

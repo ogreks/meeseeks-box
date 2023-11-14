@@ -5,10 +5,9 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/base64"
-	"testing"
-
 	"github.com/ogreks/meeseeks-box/pkg/crypt"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func Test_RSACrypt(t *testing.T) {

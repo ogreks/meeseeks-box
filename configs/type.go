@@ -1,4 +1,4 @@
-package config
+package configs
 
 type Log struct {
 	// 日志级别
@@ -30,6 +30,8 @@ type Database struct {
 	Prefix string `mapstruture:"prefix"`
 
 	Charset string `mapstructure:"charset"`
+
+	LogPath string `mapstructure:"log_path"`
 }
 
 type Server struct {
@@ -42,4 +44,11 @@ type Server struct {
 	MaxConn int `mapstructure:"max_conn"`
 	// 服务器读超时
 	ReadTimeout int `mapstructure:"read_timeout"`
+}
+
+type Jwt struct {
+	Secret    string `mapstructure:"secret"`
+	Expire    int    `mapstructure:"expire"`
+	Issuer    string `mapstructure:"-"`
+	HeaderKey string `mapstructure:"-"`
 }

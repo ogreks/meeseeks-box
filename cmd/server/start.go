@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/ogreks/meeseeks-box/config"
+	"github.com/ogreks/meeseeks-box/configs"
 	api "github.com/ogreks/meeseeks-box/internal/bootstrap"
 	"github.com/ogreks/meeseeks-box/pkg/command"
 	"github.com/spf13/cobra"
@@ -38,10 +38,10 @@ func NewStartServer() *StartServer {
 
 func (s *StartServer) initVars() {
 	startServerCmd := s.GetCommand()
-	// flags: config or -c
+	// flags: configs or -c
 	startServerCmd.Flags().StringVarP(
-		&s.config, "config", "c", "",
-		"runtime configuration files or directory (default: workdir config/dev.yaml)",
+		&s.config, "configs", "c", "",
+		"runtime configuration files or directory (default: workdir configs.yaml)",
 	)
 	// flags: daemon or -d
 	startServerCmd.Flags().BoolVarP(
@@ -56,7 +56,7 @@ func (s *StartServer) runCommand(cmd *cobra.Command, args []string) error {
 		configFile = app.DefaultConfigFile
 	}
 
-	cfg := config.InitConfig(configFile)
+	cfg := configs.InitConfig(configFile)
 
 	server := api.NewApi(cfg.GetServer().Addr, cfg.GetServer().Port)
 	if s.daemon {

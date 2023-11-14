@@ -3,18 +3,18 @@ package ioc
 import (
 	"errors"
 	"fmt"
-
-	"github.com/ogreks/meeseeks-box/config"
+	"github.com/ogreks/meeseeks-box/configs"
+	"github.com/ogreks/meeseeks-box/internal/dao"
 	"github.com/ogreks/meeseeks-box/internal/repository/orm"
 	"github.com/ogreks/meeseeks-box/internal/repository/orm/mysql"
 )
 
-func InitORM(cfg config.Config) (r orm.Repo) {
+func InitORM(cfg configs.Config) (r orm.Repo) {
 	database := cfg.Database
 	driver := orm.DB_TYPE(database.Driver)
 	switch driver {
 	case orm.DB_TYPE_MYSQL:
-		r = mysql.NewMysqlRepo(database)
+		r = mysql.NewMysql(database)
 	default:
 		panic(errors.New(fmt.Sprintf("orm configure error: input [%s] unknown, use mysql、sqlite", driver)))
 	}
@@ -23,6 +23,8 @@ func InitORM(cfg config.Config) (r orm.Repo) {
 	if err != nil {
 		panic(err)
 	}
+
+	dao.SetDefault(r.GetDB())
 
 	return
 }

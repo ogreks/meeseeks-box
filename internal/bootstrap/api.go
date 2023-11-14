@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/ogreks/meeseeks-box/config"
+	"github.com/ogreks/meeseeks-box/configs"
 	"github.com/ogreks/meeseeks-box/pkg/logger"
 	"github.com/ogreks/meeseeks-box/pkg/utils"
 	"go.uber.org/zap"
@@ -47,7 +47,7 @@ func (a *server) Start(ctx context.Context) error {
 
 	server := InitApiServer()
 
-	if config.GetConfig().GetServer().Debug {
+	if configs.GetConfig().GetServer().Debug {
 		gin.SetMode(gin.DebugMode)
 	}
 
@@ -81,7 +81,7 @@ func (a *server) Start(ctx context.Context) error {
 		httpSvc := &http.Server{
 			Addr:        fmt.Sprintf("%s:%d", a.address, a.port),
 			Handler:     server,
-			ReadTimeout: time.Second * time.Duration(config.GetConfig().GetServer().ReadTimeout),
+			ReadTimeout: time.Second * time.Duration(configs.GetConfig().GetServer().ReadTimeout),
 		}
 
 		go func() {

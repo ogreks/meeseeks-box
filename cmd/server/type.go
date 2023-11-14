@@ -2,7 +2,8 @@ package server
 
 import (
 	"fmt"
-	"os"
+
+	"github.com/ogreks/meeseeks-box/pkg/command"
 )
 
 type AppServerConfigure struct {
@@ -12,13 +13,5 @@ type AppServerConfigure struct {
 
 var app = AppServerConfigure{
 	Name:              fmt.Sprintf("%s-server-api", "meeseeks"),
-	DefaultConfigFile: fmt.Sprintf("%s/config/dev.yaml", workdir()),
-}
-
-func workdir() string {
-	workdir, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
-	return workdir
+	DefaultConfigFile: fmt.Sprintf("%s/config.yaml", command.HelpGetWorkDir()),
 }
