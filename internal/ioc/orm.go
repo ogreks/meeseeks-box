@@ -3,6 +3,7 @@ package ioc
 import (
 	"errors"
 	"fmt"
+
 	"github.com/ogreks/meeseeks-box/configs"
 	"github.com/ogreks/meeseeks-box/internal/dao"
 	"github.com/ogreks/meeseeks-box/internal/repository/orm"

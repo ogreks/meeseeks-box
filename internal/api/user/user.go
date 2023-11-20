@@ -4,6 +4,9 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"net/http"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/ogreks/meeseeks-box/configs"
 	"github.com/ogreks/meeseeks-box/internal/pkg/middleware"
@@ -11,8 +14,6 @@ import (
 	"github.com/rs/xid"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
-	"net/http"
-	"time"
 )
 
 const (
@@ -136,6 +137,8 @@ func (h *handler) Login(ctx *gin.Context) {
 	}
 
 	ctx.Request.Header.Set(configs.GetConfig().Jwt.HeaderKey, fmt.Sprintf("Bearer %s", token))
+	ctx.Header("Authorization", fmt.Sprintf("Bearer %s", token))
+
 	ctx.JSON(http.StatusOK, gin.H{
 		"code":    200,
 		"message": "success",
@@ -161,10 +164,10 @@ func (h *handler) Login(ctx *gin.Context) {
 func (h *handler) Register(ctx *gin.Context) {
 	type register struct {
 		Username     string `json:"username" binding:"required"`
-		Password     string `json:"password" binding:"password,base64"`
+		Password     string `json:"password" binding:"required,base64"`
 		VerifyCode   string `json:"verify_code"`
 		NickName     string `json:"nick_name"`
-		RegisterType int    `json:"register_type" binding:"required"`
+		RegisterType int    `json:"type" binding:"required"`
 	}
 
 	var r register

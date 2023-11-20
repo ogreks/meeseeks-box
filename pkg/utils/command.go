@@ -2,11 +2,12 @@ package utils
 
 import (
 	"context"
-	"go.uber.org/zap"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"go.uber.org/zap"
 )
 
 func Run(ctx context.Context, logger *zap.Logger, handle func(ctx context.Context) (func(), error)) error {

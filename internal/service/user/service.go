@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+
 	"github.com/ogreks/meeseeks-box/internal/domain/user"
 	"github.com/ogreks/meeseeks-box/internal/repository/orm"
 	"go.uber.org/zap"

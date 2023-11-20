@@ -12,13 +12,13 @@ func NewHash(hashType crypt.Hash) *Hash {
 	}
 }
 
-//Get gets hashed bytes with defined hashType
+// Get gets hashed bytes with defined hashType
 func (h *Hash) Get(src []byte) (dst []byte, err error) {
 	_, dst, err = crypt.GetHash(src, h.HashType)
 	return
 }
 
-//EncodeToString gets hashed bytes with defined hashType and then encode to string
+// EncodeToString gets hashed bytes with defined hashType and then encode to string
 func (h *Hash) EncodeToString(src []byte, encodeType ...crypt.Encode) (dst string, err error) {
 	hashed, err := h.Get(src)
 	if err != nil {

@@ -1,6 +1,6 @@
-# config.Config
+# configs.Config
 
-# config.Server
+# configs.Server
 server:
   debug: true
   addr: localhost
@@ -8,7 +8,12 @@ server:
   read_timeout: 60
   max_conn: 1000
 
-# config.Database
+# configs.JWT
+jwt:
+  secret: meeseeks
+  expire: 3600
+
+# configs.Database
 database:
   mode: 1
   driver: mysql

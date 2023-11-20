@@ -1,8 +1,9 @@
 package migrate
 
 import (
-	"gorm.io/gorm"
 	"strings"
+
+	"gorm.io/gorm"
 
 	"github.com/ogreks/meeseeks-box/configs"
 	"github.com/ogreks/meeseeks-box/internal/ioc"

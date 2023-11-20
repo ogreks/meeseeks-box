@@ -1,9 +1,10 @@
 package migrate
 
 import (
+	"strings"
+
 	"github.com/ogreks/meeseeks-box/configs"
 	"github.com/ogreks/meeseeks-box/internal/ioc"
-	"strings"
 
 	// userModel "github.com/ogreks/meeseeks-box/internal/model/user"
 	"github.com/ogreks/meeseeks-box/pkg/command"

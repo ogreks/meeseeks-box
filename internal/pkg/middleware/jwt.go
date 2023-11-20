@@ -2,12 +2,13 @@ package middleware
 
 import (
 	"errors"
-	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt"
-	"github.com/ogreks/meeseeks-box/configs"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt"
+	"github.com/ogreks/meeseeks-box/configs"
 )
 
 // ErrorInvalidKey is the error for invalid key

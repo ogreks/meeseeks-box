@@ -3,10 +3,11 @@ package server
 import (
 	"errors"
 	"fmt"
-	"github.com/ogreks/meeseeks-box/pkg/command"
-	"github.com/spf13/cobra"
 	"os"
 	"os/exec"
+
+	"github.com/ogreks/meeseeks-box/pkg/command"
+	"github.com/spf13/cobra"
 )
 
 type StopServer struct {

@@ -1,9 +1,11 @@
 package middleware
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/multierr"
 	"go.uber.org/zap"
 )
 
@@ -31,20 +33,50 @@ func RecoveryWithConfig(logger *zap.Logger, config RecoveryConfig) gin.HandlerFu
 	return func(c *gin.Context) {
 		defer func() {
 			if err := recover(); err != nil {
-				var fields []zap.Field = []zap.Field{
-					zap.StackSkip("stack", config.StackSkip),
-					zap.String("request", c.Request.RequestURI),
-					zap.String("method", c.Request.Method),
-					zap.String("client_ip", c.ClientIP()),
-					zap.String("user_agent", c.Request.UserAgent()),
-					zap.Error(err.(error)),
+				if err, ok := err.(error); ok {
+					var fields []zap.Field = []zap.Field{
+						zap.StackSkip("stack", config.StackSkip),
+						zap.String("trace_id", c.Writer.Header().Get(DefaultTraceConfig.ResponseTraceKey)),
+						zap.String("request", c.Request.RequestURI),
+						zap.String("method", c.Request.Method),
+						zap.String("client_ip", c.ClientIP()),
+						zap.String("user_agent", c.Request.UserAgent()),
+						zap.Error(err),
+					}
+
+					logger.Error("[Recovery] panic recovered", fields...)
 				}
 
-				logger.Error("[Recovery] panic recovered", fields...)
+				fmt.Printf("%v\n", err)
 
 				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 					"code":    http.StatusInternalServerError,
 					"message": "Internal server error, please try again later.",
+					"data":    map[string]interface{}{},
+				})
+				return
+			}
+
+			if c.IsAborted() {
+				var abortErr error
+				for i := range c.Errors {
+					multierr.AppendInto(&abortErr, c.Errors[i])
+					var fields []zap.Field = []zap.Field{
+						zap.StackSkip("stack", config.StackSkip),
+						zap.String("trace_id", c.Writer.Header().Get(DefaultTraceConfig.ResponseTraceKey)),
+						zap.String("request", c.Request.RequestURI),
+						zap.String("method", c.Request.Method),
+						zap.String("client_ip", c.ClientIP()),
+						zap.String("user_agent", c.Request.UserAgent()),
+						zap.Error(c.Errors[i]),
+					}
+
+					logger.Error("[gin aborted] errors:", fields...)
+				}
+
+				c.JSONP(c.Writer.Status(), gin.H{
+					"code":    c.Writer.Status(),
+					"message": c.Errors.Errors()[0],
 					"data":    map[string]interface{}{},
 				})
 			}

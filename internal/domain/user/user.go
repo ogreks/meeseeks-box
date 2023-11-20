@@ -3,13 +3,14 @@ package user
 import (
 	"context"
 	"errors"
+	"time"
+
 	"github.com/ogreks/meeseeks-box/internal/dao"
 	"github.com/ogreks/meeseeks-box/internal/model"
 	"github.com/ogreks/meeseeks-box/internal/repository/orm"
 	"go.uber.org/zap"
 	"gorm.io/gen/field"
 	"gorm.io/gorm"
-	"time"
 )
 
 var (

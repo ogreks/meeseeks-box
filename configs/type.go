@@ -27,8 +27,6 @@ type Database struct {
 
 	Mode int `mapstructure:"mode"`
 
-	Prefix string `mapstruture:"prefix"`
-
 	Charset string `mapstructure:"charset"`
 
 	LogPath string `mapstructure:"log_path"`

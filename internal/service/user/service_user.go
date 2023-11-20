@@ -3,11 +3,12 @@ package user
 import (
 	"context"
 	"errors"
+	"time"
+
 	udomain "github.com/ogreks/meeseeks-box/internal/domain/user"
 	"github.com/ogreks/meeseeks-box/internal/model"
 	"github.com/ogreks/meeseeks-box/internal/pkg/utils"
 	"golang.org/x/crypto/bcrypt"
-	"time"
 )
 
 var (
@@ -75,9 +76,11 @@ func (s *service) GetUserByUserName(ctx context.Context, userName string, passwo
 	}
 
 	// update last login time
-	go func(ctx context.Context, aid uint64, t time.Time) {
+	go func(aid uint64, t time.Time) {
+		ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+		defer cancel()
 		_ = s.domain.UpdateLastLoginAtByAccountId(ctx, aid, t)
-	}(ctx, account.ID, time.Now())
+	}(account.ID, time.Now())
 
 	return &UserAccount{
 		Aid: account.Aid,

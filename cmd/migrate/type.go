@@ -20,6 +20,7 @@ var (
 func systemModels() []any {
 	return []any{
 		&model.Config{},
+		&model.VerifyCode{},
 	}
 }
 
