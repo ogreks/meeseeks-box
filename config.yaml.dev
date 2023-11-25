@@ -25,3 +25,11 @@ database:
   source: meeseeks:meeseeks@tcp(localhost:13306)/meeseeks?charset=utf8mb4&parseTime=True&loc=Local
   log_path: ./log/sql.log
 
+
+webhook:
+  feishu:
+    app_id: # 应用id
+    secret: # 应用秘钥
+    encrypt_key:  # webhook key 可选
+    verification_token:  # webhook token 可选
+
