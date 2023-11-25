@@ -2,8 +2,9 @@ package token
 
 import (
 	"errors"
-	"github.com/golang-jwt/jwt"
 	"time"
+
+	"github.com/golang-jwt/jwt"
 )
 
 var (
@@ -27,7 +28,6 @@ type Token[T Type, V Val] interface {
 }
 
 type Option[T Type, V Val] func(Token[T, V])
-
 
 type DefaultToken[T string, F func() (jwt.SigningMethod, []byte, jwt.Claims)] struct {
 	store Store[T]
@@ -120,7 +120,7 @@ func (dt *DefaultToken[T, F]) Validate(token T) error {
 
 	_, err := jwt.ParseWithClaims(string(token), claim, func(token *jwt.Token) (interface{}, error) {
 		return secret, nil
-	}
+	})
 
 	if errors.Is(err, jwt.ErrInvalidKey) {
 		return ErrInvalidKey

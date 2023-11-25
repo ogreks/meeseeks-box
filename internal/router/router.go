@@ -12,7 +12,7 @@ type Router interface {
 	Register(r *gin.Engine) Router
 }
 
-func InitRouter(g *gin.Engine, db orm.Repo, log *zap.Logger, authMiddleware *middleware.JwtMiddleware) error {
+func InitRouter(g *gin.Engine, db orm.Repo, log *zap.Logger, authMiddleware *middleware.JwtMiddleware, client *middleware.Lark) error {
 
 	user.Register(g, db, log, authMiddleware)
 

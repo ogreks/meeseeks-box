@@ -16,6 +16,9 @@ type Config struct {
 	Database Database `mapstructure:"database"`
 	Log      Log      `mapstructure:"log"`
 	Jwt      Jwt      `mapstructure:"jwt"`
+	WebHook  struct {
+		Feishu Feishu `mapstructure:"feishu"`
+	} `mapstructure:"webhook"`
 }
 
 func (c *Config) GetServer() Server {

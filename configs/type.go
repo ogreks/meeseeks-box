@@ -1,8 +1,14 @@
 package configs
 
+const (
+	Debug int8 = iota - 1
+	Info
+	Warn
+)
+
 type Log struct {
 	// 日志级别
-	Level string `mapstructure:"level"`
+	Level int `mapstructure:"level"`
 	// 日志格式
 	Format string `mapstructure:"format"`
 	// 日志文件
@@ -49,4 +55,11 @@ type Jwt struct {
 	Expire    int    `mapstructure:"expire"`
 	Issuer    string `mapstructure:"-"`
 	HeaderKey string `mapstructure:"-"`
+}
+
+type Feishu struct {
+	AppId             string `mapstructure:"app_id"`
+	AppSecret         string `mapstructure:"secret"`
+	EncryptKey        string `mapstructure:"encrypt_key"`
+	VerificationToken string `mapstructure:"verification_token"`
 }

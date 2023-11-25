@@ -18,9 +18,12 @@ func InitApiServer() *gin.Engine {
 		ioc.InitLogger,
 		// init orm
 		ioc.InitORM,
+		// web hook
+		ioc.NewLarkClient,
 		// init middleware
 		iocApi.InitMiddleware,
 		iocApi.InitJwtMiddleware,
+		iocApi.InitWebHook,
 		// init api server
 		iocApi.InitApiServer,
 	)
