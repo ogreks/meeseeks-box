@@ -5,23 +5,25 @@ import (
 	"github.com/golang-jwt/jwt"
 	lark "github.com/larksuite/oapi-sdk-go/v3"
 	"github.com/ogreks/meeseeks-box/configs"
+	"github.com/ogreks/meeseeks-box/internal/pkg/feishu"
 	"github.com/ogreks/meeseeks-box/internal/pkg/middleware"
 	"github.com/ogreks/meeseeks-box/internal/repository/orm"
 	"github.com/ogreks/meeseeks-box/internal/router"
 	"go.uber.org/zap"
 )
 
-func InitApiServer(db orm.Repo, logger *zap.Logger, middlewares []gin.HandlerFunc, jwtMiddleware *middleware.JwtMiddleware, lark *middleware.Lark, client *lark.Client) *gin.Engine {
+func InitApiServer(db orm.Repo, logger *zap.Logger, middlewares []gin.HandlerFunc, jwtMiddleware *middleware.JwtMiddleware, lark *middleware.Lark, client *lark.Client, msg *feishu.UserMessage) *gin.Engine {
 	g := gin.New()
 
 	g.Use(middlewares...)
 
 	_ = router.InitRouter(&router.RouterHandler{
-		Engine:         g,
-		DB:             db,
-		Log:            logger,
-		AuthMiddleware: jwtMiddleware,
-		Lark:           lark,
+		Engine:            g,
+		DB:                db,
+		Log:               logger,
+		AuthMiddleware:    jwtMiddleware,
+		Lark:              lark,
+		MessageDispatcher: msg,
 	})
 
 	return g

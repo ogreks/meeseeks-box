@@ -21,7 +21,8 @@ func InitApiServer() *gin.Engine {
 	v := api.InitMiddleware(logger)
 	jwtMiddleware := api.InitJwtMiddleware(config)
 	lark := api.InitWebHook(config, logger)
-	client := ioc.NewLarkClient(config, logger)
-	engine := api.InitApiServer(repo, logger, v, jwtMiddleware, lark, client)
+	client := ioc.InitLarkClient(config, logger)
+	userMessage := ioc.InitLarkMessageDispatcher(logger, repo, client)
+	engine := api.InitApiServer(repo, logger, v, jwtMiddleware, lark, client, userMessage)
 	return engine
 }
