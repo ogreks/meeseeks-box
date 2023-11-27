@@ -8,6 +8,7 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/wire v0.5.0
+	github.com/larksuite/oapi-sdk-go/v3 v3.0.32
 	github.com/rs/xid v1.5.0
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.17.0
@@ -40,8 +41,7 @@ require (
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.6 // indirect
-	github.com/larksuite/oapi-sdk-gin v1.0.0 // indirect
-	github.com/larksuite/oapi-sdk-go/v3 v3.0.32 // indirect
+	github.com/larksuite/oapi-sdk-gin v1.0.0
 	github.com/leodido/go-urn v1.2.4 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect

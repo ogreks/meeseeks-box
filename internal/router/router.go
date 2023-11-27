@@ -5,16 +5,23 @@ import (
 	"github.com/ogreks/meeseeks-box/internal/pkg/middleware"
 	"github.com/ogreks/meeseeks-box/internal/repository/orm"
 	"github.com/ogreks/meeseeks-box/internal/router/user"
+	"github.com/ogreks/meeseeks-box/internal/router/webhook"
 	"go.uber.org/zap"
 )
 
-type Router interface {
-	Register(r *gin.Engine) Router
+type RouterHandler struct {
+	Engine *gin.Engine
+	DB     orm.Repo
+	Log    *zap.Logger
+
+	AuthMiddleware *middleware.JwtMiddleware
+	Lark           *middleware.Lark
 }
 
-func InitRouter(g *gin.Engine, db orm.Repo, log *zap.Logger, authMiddleware *middleware.JwtMiddleware, client *middleware.Lark) error {
+func InitRouter(rh *RouterHandler) error {
 
-	user.Register(g, db, log, authMiddleware)
+	user.Register(rh.Engine, rh.DB, rh.Log, rh.AuthMiddleware)
+	webhook.Register(rh.Engine, rh.Lark)
 
 	return nil
 }

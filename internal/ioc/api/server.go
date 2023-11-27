@@ -16,7 +16,13 @@ func InitApiServer(db orm.Repo, logger *zap.Logger, middlewares []gin.HandlerFun
 
 	g.Use(middlewares...)
 
-	_ = router.InitRouter(g, db, logger, jwtMiddleware, lark)
+	_ = router.InitRouter(&router.RouterHandler{
+		Engine:         g,
+		DB:             db,
+		Log:            logger,
+		AuthMiddleware: jwtMiddleware,
+		Lark:           lark,
+	})
 
 	return g
 }
