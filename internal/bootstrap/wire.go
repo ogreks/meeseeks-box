@@ -24,7 +24,6 @@ func InitApiServer() *gin.Engine {
 		// init middleware
 		iocApi.InitMiddleware,
 		iocApi.InitJwtMiddleware,
-		iocApi.InitWebHook,
 		// init api server
 		iocApi.InitApiServer,
 	)

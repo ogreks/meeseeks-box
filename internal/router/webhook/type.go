@@ -2,10 +2,13 @@ package webhook
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/ogreks/meeseeks-box/internal/pkg/middleware"
+	feishuUserMessage "github.com/ogreks/meeseeks-box/internal/pkg/feishu/user"
 )
 
-func Register(g *gin.Engine, lark *middleware.Lark) {
-	l := NewLark(lark)
-	l.Register(g)
+func Register(g *gin.Engine, messageEvent feishuUserMessage.UserMessageInterface) {
+	l := NewLark()
+
+	r := g.Group("/webhook")
+
+	l.Register(r, messageEvent)
 }

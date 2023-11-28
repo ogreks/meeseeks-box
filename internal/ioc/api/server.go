@@ -5,14 +5,21 @@ import (
 	"github.com/golang-jwt/jwt"
 	lark "github.com/larksuite/oapi-sdk-go/v3"
 	"github.com/ogreks/meeseeks-box/configs"
-	"github.com/ogreks/meeseeks-box/internal/pkg/feishu"
+	feishuUserMessage "github.com/ogreks/meeseeks-box/internal/pkg/feishu/user"
 	"github.com/ogreks/meeseeks-box/internal/pkg/middleware"
 	"github.com/ogreks/meeseeks-box/internal/repository/orm"
 	"github.com/ogreks/meeseeks-box/internal/router"
 	"go.uber.org/zap"
 )
 
-func InitApiServer(db orm.Repo, logger *zap.Logger, middlewares []gin.HandlerFunc, jwtMiddleware *middleware.JwtMiddleware, lark *middleware.Lark, client *lark.Client, msg *feishu.UserMessage) *gin.Engine {
+func InitApiServer(
+	db orm.Repo, // db
+	logger *zap.Logger, // log
+	middlewares []gin.HandlerFunc, // middleware
+	jwtMiddleware *middleware.JwtMiddleware, // jwt middleware
+	client *lark.Client, // feishu client
+	msg feishuUserMessage.UserMessageInterface, // feishu message event
+) *gin.Engine {
 	g := gin.New()
 
 	g.Use(middlewares...)
@@ -22,7 +29,6 @@ func InitApiServer(db orm.Repo, logger *zap.Logger, middlewares []gin.HandlerFun
 		DB:                db,
 		Log:               logger,
 		AuthMiddleware:    jwtMiddleware,
-		Lark:              lark,
 		MessageDispatcher: msg,
 	})
 
@@ -44,16 +50,5 @@ func InitJwtMiddleware(cfg configs.Config) *middleware.JwtMiddleware {
 		middleware.WithClaims(&middleware.GlobalJWT{}),
 		middleware.WithSigningMethod(jwt.SigningMethodHS512),
 		middleware.WithJWTHeaderKey(cfg.Jwt.HeaderKey),
-	)
-}
-
-func InitWebHook(cfg configs.Config, logger *zap.Logger) *middleware.Lark {
-	return middleware.NewLarkMiddleware(
-		middleware.LarkConfig{
-			AppId:             cfg.WebHook.Feishu.AppId,
-			Secret:            cfg.WebHook.Feishu.AppSecret,
-			EncryptKey:        cfg.WebHook.Feishu.EncryptKey,
-			VerificationToken: cfg.WebHook.Feishu.VerificationToken,
-		},
 	)
 }

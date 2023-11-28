@@ -23,7 +23,7 @@ require (
 	gorm.io/plugin/dbresolver v1.3.0
 )
 
-require go.uber.org/atomic v1.11.0 // indirect
+require go.uber.org/atomic v1.11.0
 
 require (
 	github.com/bytedance/sonic v1.10.2 // indirect

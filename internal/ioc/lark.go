@@ -4,7 +4,7 @@ import (
 	lark "github.com/larksuite/oapi-sdk-go/v3"
 	larkcore "github.com/larksuite/oapi-sdk-go/v3/core"
 	"github.com/ogreks/meeseeks-box/configs"
-	"github.com/ogreks/meeseeks-box/internal/pkg/feishu"
+	feishuUserMessage "github.com/ogreks/meeseeks-box/internal/pkg/feishu/user"
 	"github.com/ogreks/meeseeks-box/internal/repository/orm"
 	"go.uber.org/zap"
 )
@@ -22,13 +22,15 @@ func InitLarkClient(cfg configs.Config, logger *zap.Logger) *lark.Client {
 }
 
 // 处理飞书消息
-func InitLarkMessageDispatcher(log *zap.Logger, db orm.Repo, client *lark.Client) *feishu.UserMessage {
-	return feishu.NewUserMessage(
+func InitLarkMessageDispatcher(cfg configs.Config, log *zap.Logger, db orm.Repo, client *lark.Client) feishuUserMessage.UserMessageInterface {
+	return feishuUserMessage.NewUserMessage(
 		log,
 		db,
 		client,
-		feishu.WithOnP2MessageReceiveV1(),
-		feishu.WithOnP2MessageReadV1(),
-		feishu.WithOnP2UserCreatedV3(),
+		feishuUserMessage.WithOnP2MessageReceiveV1(),
+		feishuUserMessage.WithOnP2MessageReadV1(),
+		feishuUserMessage.WithOnP2UserCreatedV3(),
+		feishuUserMessage.WithEncryptKey(cfg.WebHook.Feishu.EncryptKey),
+		feishuUserMessage.WithVerificationToken(cfg.WebHook.Feishu.VerificationToken),
 	)
 }

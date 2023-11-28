@@ -2,7 +2,7 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/ogreks/meeseeks-box/internal/pkg/feishu"
+	feishuUserMessage "github.com/ogreks/meeseeks-box/internal/pkg/feishu/user"
 	"github.com/ogreks/meeseeks-box/internal/pkg/middleware"
 	"github.com/ogreks/meeseeks-box/internal/repository/orm"
 	"github.com/ogreks/meeseeks-box/internal/router/user"
@@ -16,14 +16,13 @@ type RouterHandler struct {
 	Log    *zap.Logger
 
 	AuthMiddleware    *middleware.JwtMiddleware
-	Lark              *middleware.Lark
-	MessageDispatcher *feishu.UserMessage
+	MessageDispatcher feishuUserMessage.UserMessageInterface
 }
 
 func InitRouter(rh *RouterHandler) error {
 
 	user.Register(rh.Engine, rh.DB, rh.Log, rh.AuthMiddleware)
-	webhook.Register(rh.Engine, rh.Lark)
+	webhook.Register(rh.Engine, rh.MessageDispatcher)
 
 	return nil
 }
