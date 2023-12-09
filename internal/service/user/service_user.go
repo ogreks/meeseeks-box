@@ -77,7 +77,7 @@ func (s *service) GetUserByUserName(ctx context.Context, userName string, passwo
 
 	// update last login time
 	go func(aid uint64, t time.Time) {
-		ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 		defer cancel()
 		_ = s.domain.UpdateLastLoginAtByAccountId(ctx, aid, t)
 	}(account.ID, time.Now())

@@ -39,15 +39,18 @@ type Database struct {
 }
 
 type Server struct {
+	// server debug mode (default: true)
 	Debug bool `mapstructure:"debug"`
-	// 服务器地址
+	// server address to listen (default: 0.0.0.0)
 	Addr string `mapstructure:"addr"`
-	// 服务器端口
+	// server port (default: 80)
 	Port int `mapstructure:"port"`
-	// 服务器最大并发连接数
+	// server max connection (default: 1000)
 	MaxConn int `mapstructure:"max_conn"`
-	// 服务器读超时
+	// server read timeout (default: 60)
 	ReadTimeout int `mapstructure:"read_timeout"`
+	// server log path (default: ./log/server.log)
+	LogPath string `mapstructure:"log_path"`
 }
 
 type Jwt struct {

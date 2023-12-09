@@ -4,13 +4,13 @@ import larkcard "github.com/larksuite/oapi-sdk-go/v3/card"
 
 func TemplateUnopenedAbilityCard() string {
 	content_zh := `这个功能极为重要 ***@开发者***
-	这个功能可以暂缓 **[!-_-!]**
-	这个功能什么时候能有~ 
-	[点我前往查看](https://no0overtime0group.feishu.cn/docx/TQSkdZizGoeFbmxe0apcQncdnMe)`
+这个功能可以暂缓 **[!-_-!]**
+这个功能什么时候能有~ 
+[点我前往查看](https://no0overtime0group.feishu.cn/docx/TQSkdZizGoeFbmxe0apcQncdnMe)`
 	content_en := `This function is extremely important ***@Developer***
-	This function can be postponed **[!-_-!]**
-	When will this function be available~
-	[Click here to view](https://no0overtime0group.feishu.cn/docx/TQSkdZizGoeFbmxe0apcQncdnMe)
+This function can be postponed **[!-_-!]**
+When will this function be available~
+[Click here to view](https://no0overtime0group.feishu.cn/docx/TQSkdZizGoeFbmxe0apcQncdnMe)
 	`
 	element := larkcard.NewMessageCardI18nElements().
 		ZhCN([]larkcard.MessageCardElement{

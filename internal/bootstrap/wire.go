@@ -10,17 +10,20 @@ import (
 	iocApi "github.com/ogreks/meeseeks-box/internal/ioc/api"
 )
 
+//go:generate wire
 func InitApiServer() *gin.Engine {
 	wire.Build(
 		// init configs
 		ioc.InitConfig,
 		// init logger
+		ioc.InitLogDriver,
 		ioc.InitLogger,
 		// init orm
 		ioc.InitORM,
 		// web hook
 		ioc.InitLarkClient,
 		ioc.InitLarkMessageDispatcher,
+		ioc.InitLarkCardMessagerDispatcher,
 		// init middleware
 		iocApi.InitMiddleware,
 		iocApi.InitJwtMiddleware,

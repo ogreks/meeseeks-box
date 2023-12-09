@@ -9,9 +9,11 @@ import (
 	"github.com/spf13/viper"
 )
 
-var cfg = new(Config)
+var cfg = NewConfig()
 
 type Config struct {
+	// TODO watch config file change broadcast notification
+	watch    chan Config
 	Server   Server   `mapstructure:"server"`
 	Database Database `mapstructure:"database"`
 	Log      Log      `mapstructure:"log"`
@@ -19,6 +21,21 @@ type Config struct {
 	WebHook  struct {
 		Feishu Feishu `mapstructure:"feishu"`
 	} `mapstructure:"webhook"`
+}
+
+// init config default value
+func NewConfig() *Config {
+	return &Config{
+		watch: make(chan Config, 1),
+		Server: Server{
+			Debug:       true,
+			Addr:        "0.0.0.0",
+			Port:        80,
+			MaxConn:     1000,
+			ReadTimeout: 60,
+			LogPath:     "./log/server.log",
+		},
+	}
 }
 
 func (c *Config) GetServer() Server {

@@ -64,6 +64,12 @@ func WithFilePath(file string) Option {
 	}
 }
 
+func WithDriver(driver io.Writer) Option {
+	return func(o *option) {
+		o.file = driver
+	}
+}
+
 func WithFileRotation(file string) Option {
 	dir := filepath.Dir(file)
 	if err := os.MkdirAll(dir, 0755); err != nil {
@@ -84,7 +90,7 @@ func WithFileRotation(file string) Option {
 
 func WithDisableConsole() Option {
 	return func(o *option) {
-		o.disableConsole = true
+		o.disableConsole = false
 	}
 }
 

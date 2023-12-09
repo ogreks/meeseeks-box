@@ -3,10 +3,11 @@
 # configs.Server
 server:
   debug: true
-  addr: localhost
-  port: 8000
+  addr: 0.0.0.0
+  port: 80
   read_timeout: 60
   max_conn: 1000
+  log_path: ./log/server.log
 
 # configs.JWT
 jwt:

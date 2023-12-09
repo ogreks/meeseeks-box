@@ -11,4 +11,5 @@ import (
 type OnP2MessageReceiveV1 func(ctx context.Context, event *larkim.P2MessageReceiveV1) error
 type OnP2MessageReadV1 func(ctx context.Context, event *larkim.P2MessageReadV1) error
 type OnP2UserCreatedV3 func(ctx context.Context, event *larkcontact.P2UserCreatedV3) error
+
 type CardActionHandler func(ctx context.Context, cardAction *larkcard.CardAction) (interface{}, error)

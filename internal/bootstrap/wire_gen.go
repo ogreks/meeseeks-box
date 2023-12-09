@@ -14,14 +14,17 @@ import (
 
 // Injectors from wire.go:
 
+//go:generate wire
 func InitApiServer() *gin.Engine {
 	config := ioc.InitConfig()
 	repo := ioc.InitORM(config)
-	logger := ioc.InitLogger()
+	driver := ioc.InitLogDriver(config)
+	logger := ioc.InitLogger(config, driver)
 	v := api.InitMiddleware(logger)
 	jwtMiddleware := api.InitJwtMiddleware(config)
 	client := ioc.InitLarkClient(config, logger)
 	userMessageInterface := ioc.InitLarkMessageDispatcher(config, logger, repo, client)
-	engine := api.InitApiServer(repo, logger, v, jwtMiddleware, client, userMessageInterface)
+	cardMessagerInterface := ioc.InitLarkCardMessagerDispatcher(config, client)
+	engine := api.InitApiServer(repo, logger, v, jwtMiddleware, client, userMessageInterface, cardMessagerInterface)
 	return engine
 }

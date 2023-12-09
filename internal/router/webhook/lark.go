@@ -2,6 +2,7 @@ package webhook
 
 import (
 	"github.com/gin-gonic/gin"
+	feishuCardMessage "github.com/ogreks/meeseeks-box/internal/pkg/feishu/card"
 	feishuUserMessage "github.com/ogreks/meeseeks-box/internal/pkg/feishu/user"
 )
 
@@ -12,8 +13,9 @@ func NewLark() *Lark {
 	return &Lark{}
 }
 
-func (l *Lark) Register(g *gin.RouterGroup, MessageDispatcher feishuUserMessage.UserMessageInterface) *Lark {
+func (l *Lark) Register(g *gin.RouterGroup, MessageDispatcher feishuUserMessage.UserMessageInterface, CardDispatcher feishuCardMessage.CardMessagerInterface) *Lark {
 	MessageDispatcher.RegisterRoute("/lark/event", g)
+	CardDispatcher.RegisterCardActionHandler("/lark/card", g)
 
 	return l
 }
