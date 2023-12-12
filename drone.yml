@@ -24,4 +24,3 @@ trigger:
     - pull_request
   branch:
     - develop
----
