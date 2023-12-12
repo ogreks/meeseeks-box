@@ -1,0 +1,28 @@
+---
+kind: pipeline
+type: docker
+name: check test build
+
+steps:
+- name: check
+  image: golang:1.21.0
+  commands:
+    - make check
+
+- name: test
+  image: golang:1.21.0
+  commands:
+    - go test -v ./...
+
+- name: build
+  image: golang:1.21.0
+  commands:
+    - go build -v ./...
+
+trigger:
+  event:
+    - push
+    - pull_request
+  branch:
+    - develop
+---
