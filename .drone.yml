@@ -2,9 +2,21 @@ kind: pipeline
 type: docker
 name: default
 
+clone:
+  skip_verify: true
+
 steps:
-- name: greeting
-  image: alpine
+- name: check
+  image: golang:1.21.0
   commands:
-  - echo hello
-  - echo world
+  - make check
+
+- name: test
+  image: golang:1.21.0
+  commands:
+  - go test -v ./...
+
+- name: build
+  image: golang:1.21.0
+  commands:
+  - go build -v ./...
