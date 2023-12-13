@@ -1,6 +1,6 @@
 kind: pipeline
 type: docker
-name: check test build
+name: default
 
 steps:
 - name: check
