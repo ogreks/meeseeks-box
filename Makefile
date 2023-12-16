@@ -9,7 +9,7 @@ help:
 ## setup: Initialize warehouse setup git scripts and other initialization scripts
 .PHONY: setup
 setup:
-	@sh ./script/setup.sh
+	@sh ./scripts/setup.sh
 
 ## check: Check code formatting and introduce optimizations
 .PHONY: check
@@ -25,7 +25,7 @@ tidy:
 ## fmt: go fmt code style...
 .PHONY: fmt
 fmt:
-	@sh ./script/fmt.sh
+	@sh ./scripts/fmt.sh
 
 ## api-wire: generate api wire code...
 .PHONY: api-wire
