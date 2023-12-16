@@ -17,6 +17,7 @@ steps:
 - name: check
   image: golang:1.21.0
   commands:
+  - make setup
   - make check
 
 - name: test
