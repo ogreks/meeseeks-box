@@ -13,5 +13,5 @@ type AppServerConfigure struct {
 
 var app = AppServerConfigure{
 	Name:              fmt.Sprintf("%s-server-api", "meeseeks"),
-	DefaultConfigFile: fmt.Sprintf("%s/config.yaml", command.HelpGetWorkDir()),
+	DefaultConfigFile: fmt.Sprintf("%s/config.yml", command.HelpGetWorkDir()),
 }

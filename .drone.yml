@@ -1,6 +1,6 @@
 kind: pipeline
 type: docker
-name: default
+name: test
 
 clone:
   skip_verify: true
@@ -37,3 +37,37 @@ trigger:
   event:
     - push
     - pull_request
+
+---
+kind: pipeline
+type: docker
+name: build-deploy
+
+steps:
+- name: build
+  image: plugins/docker
+  settings:
+    registry:
+      from_secret: docker_registry
+    repo: ogreks/meeseeks-box
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_passwd
+    tags: latest
+    debug: true
+
+- name: deploy
+  image: plugins/ssh
+  settings:
+    host:
+      from_secret: meeseeks_box_host
+    user:
+      from_secret: meeseeks_box_user
+    password:
+      from_secret: meeseeks_box_passwd
+    script:
+      - docker pull ogreks/meeseeks-box:latest
+      - docker stop meeseeks-box
+      - docker rm meeseeks-box
+      - docker run -d --name meeseeks-box -p 8088:8088 -v data/meeseeks-box/:/app ogreks/meeseeks-box:latest

@@ -38,7 +38,7 @@ func (i *InitAutoMigrate) initVars() {
 	// flags: configs or -c
 	initAutoMigrateCmd.Flags().StringVarP(
 		&i.config, "configs", "c", "",
-		"runtime configuration file or directory (default: workdir configs.yaml)",
+		"runtime configuration file or directory (default: workdir config.yml)",
 	)
 	// flags: function or -f
 	initAutoMigrateCmd.Flags().StringVarP(

@@ -28,5 +28,5 @@ log/*
 
 # environment
 docker-compose.yaml
-config.yaml
+config.yml
 gorm.gen.yaml

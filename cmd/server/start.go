@@ -41,7 +41,7 @@ func (s *StartServer) initVars() {
 	// flags: configs or -c
 	startServerCmd.Flags().StringVarP(
 		&s.config, "configs", "c", "",
-		"runtime configuration files or directory (default: workdir configs.yaml)",
+		"runtime configuration files or directory (default: workdir config.yml)",
 	)
 	// flags: daemon or -d
 	startServerCmd.Flags().BoolVarP(

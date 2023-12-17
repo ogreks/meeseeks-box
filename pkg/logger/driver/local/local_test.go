@@ -1,3 +1,6 @@
+//go:build local_ignore
+// +build local_ignore
+
 package local
 
 import (

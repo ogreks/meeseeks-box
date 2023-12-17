@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	defaultConfigFile = fmt.Sprintf("%s/config.yaml", command.HelpGetWorkDir())
+	defaultConfigFile = fmt.Sprintf("%s/config.yml", command.HelpGetWorkDir())
 	daoPath           = "internal/dao"
 	modelConfigs      = map[string][]any{
 		"system":  systemModels(),

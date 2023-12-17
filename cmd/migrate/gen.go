@@ -24,7 +24,7 @@ func NewGenMigrateCommand() *GenMigrate {
 	genMigrateCmd := &cobra.Command{
 		Use:   "gen",
 		Short: "Meeseeks Box migrate gen model/dao",
-		Long:  "This is Meeseeks Box migrate gen model/dao, it's -c configs.yaml",
+		Long:  "This is Meeseeks Box migrate gen model/dao, it's -c config.yml",
 		RunE:  g.runCommand,
 	}
 
@@ -38,7 +38,7 @@ func (g *GenMigrate) initVars() {
 	// flags: configs or -c
 	genMigrateCmd.Flags().StringVarP(
 		&g.config, "configs", "c", "",
-		"runtime configuration files or directory (default: workdir configs.yaml)",
+		"runtime configuration files or directory (default: workdir config.yml)",
 	)
 	// flags: table or -t
 	genMigrateCmd.Flags().StringVarP(

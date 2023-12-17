@@ -1,15 +1,15 @@
 # configs.Config
 
-# configs.Server
+# config.Server
 server:
   debug: true
-  addr: 0.0.0.0
-  port: 80
+  addr: '0.0.0.0'
+  port: 8088
   read_timeout: 60
   max_conn: 1000
   log_path: ./log/server.log
 
-# configs.JWT
+# config.JWT
 jwt:
   secret: meeseeks
   expire: 3600
@@ -18,19 +18,18 @@ jwt:
 database:
   mode: 1
   driver: mysql
-  prefix: m_
   charset: utf8mb4
   max_idle_conn: 100
   max_open_conn: 100
   conn_max_lifetime: 60
-  source: meeseeks:meeseeks@tcp(localhost:13306)/meeseeks?charset=utf8mb4&parseTime=True&loc=Local
+  source: meeseeks:meeseeks@tcp(localhost:3306)/meeseeks?charset=utf8mb4&parseTime=True&loc=Local
   log_path: ./log/sql.log
 
-
+# configs.Webhook
 webhook:
   feishu:
-    app_id: # 应用id
-    secret: # 应用秘钥
-    encrypt_key:  # webhook key 可选
-    verification_token:  # webhook token 可选
+    app_id:
+    secret:
+    encrypt_key:  # 可选
+    verification_token:  # 可选
 
