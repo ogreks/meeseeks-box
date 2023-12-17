@@ -43,6 +43,9 @@ kind: pipeline
 type: docker
 name: build-deploy
 
+clone:
+  skip_verify: true
+
 steps:
 - name: build
   image: plugins/docker
@@ -71,3 +74,10 @@ steps:
       - docker stop meeseeks-box
       - docker rm meeseeks-box
       - docker run -d --name meeseeks-box -p 8088:8088 -v data/meeseeks-box/:/app ogreks/meeseeks-box:latest
+
+trigger:
+  branch:
+    - develop
+  event:
+    - push
+    - pull_request
