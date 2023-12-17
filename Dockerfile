@@ -19,4 +19,5 @@ COPY --from=builder /app/config.yml.dev ./config.yml
 
 EXPOSE 80
 
-ENTRYPOINT ["./app/meeseeks/meeseeks-box", "server", "start"]
+ENTRYPOINT ["./meeseeks-box", "server", "start"]
+
