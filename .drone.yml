@@ -79,5 +79,4 @@ trigger:
   branch:
     - develop
   event:
-    - push
-    - pull_request
+    - success
