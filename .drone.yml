@@ -13,6 +13,9 @@ environment:
   GO111MODULE: on
   GOPROXY: https://goproxy.cn,direct
 
+extra_hosts:
+  - "gitlab.bawcat.wiki:192.168.50.20"
+  - "docker.registry.bawcat.wiki:192.168.50.25"
 steps:
 - name: check
   image: golang:1.21.0
@@ -37,14 +40,16 @@ trigger:
   event:
     - push
     - pull_request
-    
-extra_hosts:
-  - "gitlab.bawcat.wiki:192.168.50.20"
-  - "docker.registry.bawcat.wiki:192.168.50.25"
+
 ---
 kind: pipeline
 type: docker
 name: build-deploy
+
+
+extra_hosts:
+  - "gitlab.bawcat.wiki:192.168.50.20"
+  - "docker.registry.bawcat.wiki:192.168.50.25"
 
 clone:
   skip_verify: true
@@ -83,7 +88,3 @@ trigger:
     - develop
   event:
     - success
-
-extra_hosts:
-  - "gitlab.bawcat.wiki:192.168.50.20"
-  - "docker.registry.bawcat.wiki:192.168.50.25"
