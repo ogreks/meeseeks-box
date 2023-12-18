@@ -37,7 +37,10 @@ trigger:
   event:
     - push
     - pull_request
-
+    
+extra_hosts:
+  - "gitlab.bawcat.wiki:192.168.50.20"
+  - "docker.registry.bawcat.wiki:192.168.50.25"
 ---
 kind: pipeline
 type: docker
@@ -80,3 +83,7 @@ trigger:
     - develop
   event:
     - success
+
+extra_hosts:
+  - "gitlab.bawcat.wiki:192.168.50.20"
+  - "docker.registry.bawcat.wiki:192.168.50.25"
