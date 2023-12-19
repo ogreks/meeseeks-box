@@ -51,7 +51,6 @@ steps:
   image: plugins/docker
   settings:
     force_tag: true
-    auto_tag_suffix: -pre
     auto_tag: true
     insecure: true
     registry:
