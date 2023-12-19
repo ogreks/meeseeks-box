@@ -1,6 +1,6 @@
 kind: pipeline
 type: docker
-name: test
+name: make test
 
 clone:
   skip_verify: true
@@ -41,26 +41,24 @@ trigger:
 ---
 kind: pipeline
 type: docker
-name: build-deploy
+name: build and deploy
 
 clone:
   skip_verify: true
 
 steps:
-- name: build
+- name: docker-build
   image: plugins/docker
   settings:
     force_tag: true
     auto_tag: true
     insecure: true
-    registry:
-      from_secret: docker_registry
-    repo: ogreks/meeseeks-box
+    registry: docker.registry.bawcat.wiki
+    repo: docker.registry.bawcat.wiki/ogreks/meeseeks-box
     username:
       from_secret: docker_username
     password:
       from_secret: docker_passwd
-    tags: latest
     debug: true
 
 - name: deploy
@@ -78,9 +76,5 @@ steps:
       - docker rm meeseeks-box
       - docker run -d --name meeseeks-box -p 8088:8088 -v /data/meeseeks-box/config.yml:/etc/meeseeks-box/config.yml --privileged=true docker.registry.bawcat.wiki/ogreks/meeseeks-box:latest
 
-trigger:
-  when:
-    branch:
-      - develop
-    depends_on:
-      - test
+depends_on:
+  - make test
