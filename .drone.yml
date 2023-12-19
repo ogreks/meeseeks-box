@@ -50,6 +50,10 @@ steps:
 - name: build
   image: plugins/docker
   settings:
+    force_tag: true
+    auto_tag_suffix: -pre
+    auto_tag: true
+    insecure: true
     registry:
       from_secret: docker_registry
     repo: ogreks/meeseeks-box
@@ -79,5 +83,5 @@ trigger:
   when:
     branch:
       - develop
-    status:
-      - success
+    depends_on:
+      - test
