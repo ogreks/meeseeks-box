@@ -1,6 +1,7 @@
 package ioc
 
 import (
+	"crypto/tls"
 	lark "github.com/larksuite/oapi-sdk-go/v3"
 	larkcore "github.com/larksuite/oapi-sdk-go/v3/core"
 	"github.com/ogreks/meeseeks-box/configs"
@@ -8,6 +9,7 @@ import (
 	feishuUserMessage "github.com/ogreks/meeseeks-box/internal/pkg/feishu/user"
 	"github.com/ogreks/meeseeks-box/internal/repository/orm"
 	"go.uber.org/zap"
+	"net/http"
 )
 
 func InitLarkClient(cfg configs.Config, logger *zap.Logger) *lark.Client {
@@ -17,6 +19,14 @@ func InitLarkClient(cfg configs.Config, logger *zap.Logger) *lark.Client {
 		lark.WithLogLevel(larkcore.LogLevelDebug),
 		lark.WithEnableTokenCache(true),
 		lark.WithLogReqAtDebug(true),
+		// skip ssl verify
+		lark.WithHttpClient(&http.Client{
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{
+					InsecureSkipVerify: true,
+				},
+			},
+		}),
 	)
 
 	return client

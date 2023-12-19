@@ -15,9 +15,9 @@ FROM scratch as meeseeks-box
 WORKDIR /app
 
 COPY --from=builder /app/meeseeks-box .
-COPY --from=builder /app/config.yml.dev ./config.yml
+COPY --from=builder /app/config.yml.dev /etc/meeseeks-box/config.yml
 
-EXPOSE 80
+EXPOSE 8088
 
-ENTRYPOINT ["./meeseeks-box", "server", "start"]
+ENTRYPOINT ["./meeseeks-box", "server", "start", "-c", "/etc/meeseeks-box/config.yml"]
 

@@ -13,9 +13,6 @@ environment:
   GO111MODULE: on
   GOPROXY: https://goproxy.cn,direct
 
-extra_hosts:
-  - "gitlab.bawcat.wiki:192.168.50.20"
-  - "docker.registry.bawcat.wiki:192.168.50.25"
 steps:
 - name: check
   image: golang:1.21.0
@@ -46,11 +43,6 @@ kind: pipeline
 type: docker
 name: build-deploy
 
-
-extra_hosts:
-  - "gitlab.bawcat.wiki:192.168.50.20"
-  - "docker.registry.bawcat.wiki:192.168.50.25"
-
 clone:
   skip_verify: true
 
@@ -78,13 +70,14 @@ steps:
     password:
       from_secret: meeseeks_box_passwd
     script:
-      - docker pull ogreks/meeseeks-box:latest
+      - docker pull docker.registry.bawcat.wiki/ogreks/meeseeks-box:latest
       - docker stop meeseeks-box
       - docker rm meeseeks-box
-      - docker run -d --name meeseeks-box -p 8088:8088 -v data/meeseeks-box/:/app ogreks/meeseeks-box:latest
+      - docker run -d --name meeseeks-box -p 8088:8088 -v /data/meeseeks-box/config.yml:/etc/meeseeks-box/config.yml --privileged=true docker.registry.bawcat.wiki/ogreks/meeseeks-box:latest
 
 trigger:
-  branch:
-    - develop
-  event:
-    - success
+  when:
+    branch:
+      - develop
+    status:
+      - success
