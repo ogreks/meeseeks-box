@@ -20,7 +20,7 @@ func Test_DefaultStore(t *testing.T) {
 	)
 	store, err := NewDefaultStore[string](file, logger)
 	assert.NoError(t, err)
-	defer os.Remove(file)
+	//defer os.Remove(file)
 
 	testCases := []struct {
 		name   string
@@ -67,6 +67,7 @@ func Test_DefaultStore(t *testing.T) {
 			tc.before(t, store)
 			assert.NoError(t, store.Set(tc.token, tc.expire))
 			tc.after(t, store)
+			time.Sleep(3 * time.Second)
 		})
 	}
 
@@ -74,5 +75,5 @@ func Test_DefaultStore(t *testing.T) {
 	defer cancel()
 
 	t.Logf("%v", <-store.Shutdown(ctx))
-	// assert.NoError(t, os.Remove(file))
+	assert.NoError(t, os.Remove(file))
 }

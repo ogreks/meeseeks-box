@@ -96,6 +96,7 @@ func (ds *DefaultStore[T]) loadSyncMap() {
 				ret = append(ret, buffer[:readLength]...)
 				break
 			}
+
 			ds.logger.Panic("read file error", zap.Error(err))
 			return
 		}
