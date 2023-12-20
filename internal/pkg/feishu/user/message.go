@@ -79,6 +79,8 @@ func (u *UserMessage) RegisterEvent(key string, handler interface{}) UserMessage
 
 func (u *UserMessage) RegisterRoute(path string, g *gin.RouterGroup) {
 	g.POST(path, sdkginext.NewEventHandlerFunc(u.handle))
+
+	u.RegisterEvent("/version", nil)
 }
 
 // SendCloseMessage send close message

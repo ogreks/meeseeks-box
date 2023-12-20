@@ -1,6 +1,25 @@
 package feishu
 
-import larkcard "github.com/larksuite/oapi-sdk-go/v3/card"
+import (
+	larkcard "github.com/larksuite/oapi-sdk-go/v3/card"
+)
+
+func templateI18nCardElements(zhCn, enUs string) *larkcard.MessageCardI18nElements {
+	zhCnElements := make([]larkcard.MessageCardElement, 1)
+	zhCnElements[0] = larkcard.NewMessageCardMarkdown().
+		Content(zhCn).
+		Build()
+
+	enUsElements := make([]larkcard.MessageCardElement, 1)
+	enUsElements[0] = larkcard.NewMessageCardMarkdown().
+		Content(enUs).
+		Build()
+
+	return larkcard.NewMessageCardI18nElements().
+		ZhCN(zhCnElements).
+		EnUS(enUsElements).
+		Build()
+}
 
 func TemplateUnopenedAbilityCard() string {
 	content_zh := `这个功能极为重要 ***@开发者***
@@ -12,36 +31,8 @@ This function can be postponed **[!-_-!]**
 When will this function be available~
 [Click here to view](https://no0overtime0group.feishu.cn/docx/TQSkdZizGoeFbmxe0apcQncdnMe)
 	`
-	element := larkcard.NewMessageCardI18nElements().
-		ZhCN([]larkcard.MessageCardElement{
-			larkcard.NewMessageCardMarkdown().
-				Content(content_zh).
-				Build(),
-			larkcard.NewMessageCardHr().
-				Build(),
-			larkcard.NewMessageCardNote().
-				Elements([]larkcard.MessageCardNoteElement{
-					larkcard.NewMessageCardPlainText().
-						Content("Mr.Meeeeks!").
-						Build(),
-				}).
-				Build(),
-		}).
-		EnUS([]larkcard.MessageCardElement{
-			larkcard.NewMessageCardMarkdown().
-				Content(content_en).
-				Build(),
-			larkcard.NewMessageCardHr().
-				Build(),
-			larkcard.NewMessageCardNote().
-				Elements([]larkcard.MessageCardNoteElement{
-					larkcard.NewMessageCardPlainText().
-						Content("Mr.Meeeeks!").
-						Build(),
-				}).
-				Build(),
-		}).
-		Build()
+
+	element := templateI18nCardElements(content_zh, content_en)
 
 	header := larkcard.NewMessageCardHeader().
 		Template(larkcard.TemplateBlue).
@@ -69,3 +60,11 @@ When will this function be available~
 
 	return data
 }
+
+//func VersionTemplate(version string) string {
+//	content_zh := `当前版本：{{ .Version }}
+//[点我查看](https://no0overtime0group.feishu.cn/docx/TQSkdZizGoeFbmxe0apcQncdnMe)`
+//	content_en := `Current: {{ .Version }}
+//[Click here to view](https://no0overtime0group.feishu.cn/docx/TQSkdZizGoeFbmxe0apcQncdnMe)
+//	`
+//}

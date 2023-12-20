@@ -53,7 +53,6 @@ steps:
   image: plugins/docker
   settings:
     force_tag: true
-    auto_tag: true
     insecure: true
     registry: docker.registry.bawcat.wiki
     repo: docker.registry.bawcat.wiki/ogreks/meeseeks-box

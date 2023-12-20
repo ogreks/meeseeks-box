@@ -15,7 +15,14 @@ func NewLark() *Lark {
 
 func (l *Lark) Register(g *gin.RouterGroup, MessageDispatcher feishuUserMessage.UserMessageInterface, CardDispatcher feishuCardMessage.CardMessagerInterface) *Lark {
 	MessageDispatcher.RegisterRoute("/lark/event", g)
+	{
+		// message event
+	}
+
 	CardDispatcher.RegisterRoute("/lark/card", g)
+	{
+		// card event
+	}
 
 	return l
 }
