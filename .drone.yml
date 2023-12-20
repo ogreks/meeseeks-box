@@ -34,6 +34,8 @@ trigger:
   branch:
     - main
     - develop
+    - feature/*
+    - fix/*
   event:
     - push
     - pull_request
@@ -75,6 +77,14 @@ steps:
       - docker stop meeseeks-box
       - docker rm meeseeks-box
       - docker run -d --name meeseeks-box -p 8088:8088 -v /data/meeseeks-box/config.yml:/etc/meeseeks-box/config.yml --privileged=true docker.registry.bawcat.wiki/ogreks/meeseeks-box:latest
+      - docker image prune -a -f # 删除无用的老版本
 
 depends_on:
   - make test
+
+trigger:
+  branch:
+    - develop
+  event:
+    - promote
+    - rollback

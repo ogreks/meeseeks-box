@@ -14,10 +14,32 @@ When will this function be available~
 	`
 	element := larkcard.NewMessageCardI18nElements().
 		ZhCN([]larkcard.MessageCardElement{
-			larkcard.NewMessageCardMarkdown().Content(content_zh).Build(),
+			larkcard.NewMessageCardMarkdown().
+				Content(content_zh).
+				Build(),
+			larkcard.NewMessageCardHr().
+				Build(),
+			larkcard.NewMessageCardNote().
+				Elements([]larkcard.MessageCardNoteElement{
+					larkcard.NewMessageCardPlainText().
+						Content("Mr.Meeeeks!").
+						Build(),
+				}).
+				Build(),
 		}).
 		EnUS([]larkcard.MessageCardElement{
-			larkcard.NewMessageCardMarkdown().Content(content_en).Build(),
+			larkcard.NewMessageCardMarkdown().
+				Content(content_en).
+				Build(),
+			larkcard.NewMessageCardHr().
+				Build(),
+			larkcard.NewMessageCardNote().
+				Elements([]larkcard.MessageCardNoteElement{
+					larkcard.NewMessageCardPlainText().
+						Content("Mr.Meeeeks!").
+						Build(),
+				}).
+				Build(),
 		}).
 		Build()
 

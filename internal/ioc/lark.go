@@ -2,6 +2,8 @@ package ioc
 
 import (
 	"crypto/tls"
+	"net/http"
+
 	lark "github.com/larksuite/oapi-sdk-go/v3"
 	larkcore "github.com/larksuite/oapi-sdk-go/v3/core"
 	"github.com/ogreks/meeseeks-box/configs"
@@ -9,7 +11,6 @@ import (
 	feishuUserMessage "github.com/ogreks/meeseeks-box/internal/pkg/feishu/user"
 	"github.com/ogreks/meeseeks-box/internal/repository/orm"
 	"go.uber.org/zap"
-	"net/http"
 )
 
 func InitLarkClient(cfg configs.Config, logger *zap.Logger) *lark.Client {
