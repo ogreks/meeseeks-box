@@ -62,7 +62,7 @@ steps:
     debug: true
 
 - name: deploy
-  image: plugins/ssh
+  image: appleboy/drone-ssh
   settings:
     host:
       from_secret: meeseeks_box_host
