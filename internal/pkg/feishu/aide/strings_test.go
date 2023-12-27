@@ -25,7 +25,7 @@ func TestEntherCutPrefix(t *testing.T) {
 				s:       "检查 1",
 				prefixs: []string{"检查"},
 			},
-			want:   "1",
+			want:   " 1",
 			result: true,
 		},
 		{
@@ -34,10 +34,10 @@ func TestEntherCutPrefix(t *testing.T) {
 				s       string
 				prefixs []string
 			}{
-				s:       "/check 1",
+				s:       "/check 12",
 				prefixs: []string{"/check "},
 			},
-			want:   "1",
+			want:   "12",
 			result: true,
 		},
 	}
