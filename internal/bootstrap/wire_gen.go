@@ -23,8 +23,7 @@ func InitApiServer() *gin.Engine {
 	v := api.InitMiddleware(logger)
 	jwtMiddleware := api.InitJwtMiddleware(config)
 	client := ioc.InitLarkClient(config, logger)
-	userMessageInterface := ioc.InitLarkMessageDispatcher(config, logger, repo, client)
-	cardMessagerInterface := ioc.InitLarkCardMessagerDispatcher(config, client)
-	engine := api.InitApiServer(repo, logger, v, jwtMiddleware, client, userMessageInterface, cardMessagerInterface)
+	messageHandleInterface := ioc.InitLarkMessageDispatcher(config, logger, repo, client)
+	engine := api.InitApiServer(repo, logger, v, jwtMiddleware, client, messageHandleInterface)
 	return engine
 }

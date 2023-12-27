@@ -5,8 +5,7 @@ import (
 	"github.com/golang-jwt/jwt"
 	lark "github.com/larksuite/oapi-sdk-go/v3"
 	"github.com/ogreks/meeseeks-box/configs"
-	feishuCardMessage "github.com/ogreks/meeseeks-box/internal/pkg/feishu/card"
-	feishuUserMessage "github.com/ogreks/meeseeks-box/internal/pkg/feishu/user"
+	feishuMessage "github.com/ogreks/meeseeks-box/internal/pkg/feishu/message"
 	"github.com/ogreks/meeseeks-box/internal/pkg/middleware"
 	"github.com/ogreks/meeseeks-box/internal/repository/orm"
 	"github.com/ogreks/meeseeks-box/internal/router"
@@ -19,8 +18,7 @@ func InitApiServer(
 	middlewares []gin.HandlerFunc, // middleware
 	jwtMiddleware *middleware.JwtMiddleware, // jwt middleware
 	client *lark.Client, // feishu client
-	msg feishuUserMessage.UserMessageInterface, // feishu message event
-	card feishuCardMessage.CardMessagerInterface,
+	msg feishuMessage.MessageHandleInterface, // feishu message event
 ) *gin.Engine {
 	g := gin.New()
 
@@ -32,7 +30,6 @@ func InitApiServer(
 		Log:               logger,
 		AuthMiddleware:    jwtMiddleware,
 		MessageDispatcher: msg,
-		CardDispatcher:    card,
 	})
 
 	return g

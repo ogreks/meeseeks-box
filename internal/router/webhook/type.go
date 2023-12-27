@@ -2,14 +2,13 @@ package webhook
 
 import (
 	"github.com/gin-gonic/gin"
-	feishuCardMessage "github.com/ogreks/meeseeks-box/internal/pkg/feishu/card"
-	feishuUserMessage "github.com/ogreks/meeseeks-box/internal/pkg/feishu/user"
+	feishuMessage "github.com/ogreks/meeseeks-box/internal/pkg/feishu/message"
 )
 
-func Register(g *gin.Engine, messageEvent feishuUserMessage.UserMessageInterface, cardEvent feishuCardMessage.CardMessagerInterface) {
+func Register(g *gin.Engine, messageEvent feishuMessage.MessageHandleInterface) {
 	l := NewLark()
 
 	r := g.Group("/webhook")
 
-	l.Register(r, messageEvent, cardEvent)
+	l.Register(r, messageEvent)
 }

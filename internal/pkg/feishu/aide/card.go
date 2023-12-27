@@ -73,3 +73,21 @@ func WithCardPlainText(msg string) larkcard.MessageCardElement {
 		}).
 		Build()
 }
+
+func NewSendCard(header *larkcard.MessageCardHeader, elements ...larkcard.MessageCardElement) (string, error) {
+	config := larkcard.NewMessageCardConfig().
+		WideScreenMode(false).
+		EnableForward(true).
+		UpdateMulti(false).
+		Build()
+
+	var elementPool []larkcard.MessageCardElement
+	elementPool = append(elementPool, elements...)
+	elementPool = append(elementPool, WithCardHr(), WithCardNote("Mr.Meeseeks!"))
+
+	return larkcard.NewMessageCard().
+		Config(config).
+		Header(header).
+		Elements(elementPool).
+		String()
+}

@@ -23,7 +23,6 @@ func InitApiServer() *gin.Engine {
 		// web hook
 		ioc.InitLarkClient,
 		ioc.InitLarkMessageDispatcher,
-		ioc.InitLarkCardMessagerDispatcher,
 		// init middleware
 		iocApi.InitMiddleware,
 		iocApi.InitJwtMiddleware,
