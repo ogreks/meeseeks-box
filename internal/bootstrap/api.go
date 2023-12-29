@@ -70,9 +70,22 @@ func (a *server) Start(ctx context.Context) error {
 
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 200,
-			"msg":  "hello",
+			"msg":  "Hello friends from far away",
 			"data": gin.H{
 				"ips": ipAdders,
+			},
+		})
+	})
+
+	registerTime := time.Now()
+	server.GET("/status", func(ctx *gin.Context) {
+		ctx.JSON(http.StatusOK, gin.H{
+			"code": 200,
+			"msg":  "success",
+			"data": gin.H{
+				"register_time": registerTime.Format(time.RFC3339),
+				"run_time":      time.Now().Sub(registerTime).String(),
+				"now_time":      time.Now().Format(time.RFC3339),
 			},
 		})
 	})
