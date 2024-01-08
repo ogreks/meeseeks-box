@@ -15,9 +15,15 @@ type Action interface {
 	Execute(a *ActionInfo, m MessageHandleInterface) bool
 }
 
-type BaseAction struct{}
+type BaseAction struct {
+	Prefix []string
+}
 
+// Helper help message
 func (b BaseAction) Helper() []string { return nil }
+
+// Execute run server
+func (b BaseAction) Execute(a *ActionInfo, m MessageHandleInterface) bool { return true }
 
 type ActionInfo struct {
 	Handler MessageHandleInterface

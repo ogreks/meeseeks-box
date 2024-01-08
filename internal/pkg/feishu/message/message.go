@@ -28,6 +28,7 @@ const (
 )
 
 type Message struct {
+	Sender      *larkim.EventSender
 	HandlerType string
 	MsgType     string
 	MsgId       *string
@@ -47,6 +48,7 @@ type MessageHandleInterface interface {
 	RegisterActions(actions ...Action) MessageHandleInterface
 
 	Reply(ctx context.Context, messageId string, message string, msgType string) error
+	ReplyJudgeMessage(ctx context.Context, content string, msgType string, message *Message) error
 }
 
 func (m *MessageHandle) RegisterAction(action Action) MessageHandleInterface {
@@ -59,6 +61,7 @@ func (m *MessageHandle) RegisterActions(actions ...Action) MessageHandleInterfac
 	return m
 }
 
+// Reply reply user send message
 func (m *MessageHandle) Reply(ctx context.Context, messageId string, message string, msgType string) error {
 	replyBody := larkim.NewReplyMessageReqBodyBuilder().
 		MsgType(msgType).
@@ -76,6 +79,52 @@ func (m *MessageHandle) Reply(ctx context.Context, messageId string, message str
 	}
 
 	fmt.Println(resp)
+	return nil
+}
+
+// ReplyJudgeMessage
+func (m *MessageHandle) ReplyJudgeMessage(
+	ctx context.Context,
+	content string,
+	msgType string,
+	message *Message,
+) error {
+	if message.HandlerType == GroupHandler {
+		return m.Reply(
+			ctx,
+			*message.MsgId,
+			content,
+			msgType,
+		)
+	}
+
+	fmt.Println(content)
+	fmt.Println(message.Sender.SenderId)
+	// TODO p2p send message
+	msg, err := m.cli.Im.Message.Create(
+		ctx,
+		larkim.NewCreateMessageReqBuilder().
+			Body(
+				larkim.NewCreateMessageReqBodyBuilder().
+					MsgType(msgType).
+					ReceiveId(*message.ChatId).
+					Content(content).
+					Build(),
+			).
+			ReceiveIdType(larkim.ReceiveIdTypeChatId).
+			Build(),
+	)
+
+	if err != nil {
+		return err
+	}
+
+	if !msg.Success() {
+		fmt.Printf("err：%+v\n", msg.CodeError.Err)
+	}
+
+	fmt.Printf("%v\n", msg)
+
 	return nil
 }
 
@@ -166,6 +215,7 @@ func (m *MessageHandle) msgReceivedHandler(ctx context.Context, event *larkim.P2
 		ImageKeys:   aide.ParsePostImageKeys(*content),
 		SessionId:   sessionId,
 		Mention:     mention,
+		Sender:      event.Event.Sender,
 	}
 
 	data := &ActionInfo{
