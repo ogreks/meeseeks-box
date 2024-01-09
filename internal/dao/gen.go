@@ -21,6 +21,7 @@ var (
 	AccountConnect *accountConnect
 	Config         *config
 	User           *user
+	VerifyCode     *verifyCode
 )
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
@@ -29,6 +30,7 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	AccountConnect = &Q.AccountConnect
 	Config = &Q.Config
 	User = &Q.User
+	VerifyCode = &Q.VerifyCode
 }
 
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
@@ -38,6 +40,7 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		AccountConnect: newAccountConnect(db, opts...),
 		Config:         newConfig(db, opts...),
 		User:           newUser(db, opts...),
+		VerifyCode:     newVerifyCode(db, opts...),
 	}
 }
 
@@ -48,6 +51,7 @@ type Query struct {
 	AccountConnect accountConnect
 	Config         config
 	User           user
+	VerifyCode     verifyCode
 }
 
 func (q *Query) Available() bool { return q.db != nil }
@@ -59,6 +63,7 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		AccountConnect: q.AccountConnect.clone(db),
 		Config:         q.Config.clone(db),
 		User:           q.User.clone(db),
+		VerifyCode:     q.VerifyCode.clone(db),
 	}
 }
 
@@ -77,6 +82,7 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		AccountConnect: q.AccountConnect.replaceDB(db),
 		Config:         q.Config.replaceDB(db),
 		User:           q.User.replaceDB(db),
+		VerifyCode:     q.VerifyCode.replaceDB(db),
 	}
 }
 
@@ -85,6 +91,7 @@ type queryCtx struct {
 	AccountConnect IAccountConnectDo
 	Config         IConfigDo
 	User           IUserDo
+	VerifyCode     IVerifyCodeDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
@@ -93,6 +100,7 @@ func (q *Query) WithContext(ctx context.Context) *queryCtx {
 		AccountConnect: q.AccountConnect.WithContext(ctx),
 		Config:         q.Config.WithContext(ctx),
 		User:           q.User.WithContext(ctx),
+		VerifyCode:     q.VerifyCode.WithContext(ctx),
 	}
 }
 

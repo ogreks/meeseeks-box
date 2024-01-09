@@ -21,7 +21,7 @@ type Account struct {
 	Email        string     `gorm:"column:email;type:varchar(128);comment:邮箱" json:"email"`                                                    // 邮箱
 	UserName     string     `gorm:"column:user_name;type:varchar(64);index:idx_user_name,priority:1;comment:用户账号(非账号注册随机生成)" json:"user_name"` // 用户账号(非账号注册随机生成)
 	Password     string     `gorm:"column:password;type:varchar(128);comment:密码" json:"password"`                                              // 密码
-	LastActivityAt  *time.Time `gorm:"column:last_activity_at;type:timestamp;comment:最后活动时间" json:"last_activity_at"`                                   // 最后登录时间
+	LastLoginAt  *time.Time `gorm:"column:last_login_at;type:timestamp;comment:最后登录时间" json:"last_login_at"`                                   // 最后登录时间
 	IsEnabled    *uint32    `gorm:"column:is_enabled;type:tinyint unsigned;not null;default:1;comment:是否启用0.禁用/1.正常" json:"is_enabled"`        // 是否启用0.禁用/1.正常
 	WaitDelete   uint32     `gorm:"column:wait_delete;type:tinyint unsigned;not null;comment:等待删除0.否/1.是/2.永久" json:"wait_delete"`             // 等待删除0.否/1.是/2.永久
 	WaitDeleteAt *time.Time `gorm:"column:wait_delete_at;type:timestamp;comment:等待删除时间" json:"wait_delete_at"`                                 // 等待删除时间

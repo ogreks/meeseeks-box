@@ -19,7 +19,7 @@ type AccountConnect struct {
 	ConnectToken         string     `gorm:"column:connect_token;type:longtext" json:"connect_token"`
 	ConnectRefreshToken  string     `gorm:"column:connect_refresh_token;type:longtext" json:"connect_refresh_token"`
 	ConnectUserName      string     `gorm:"column:connect_user_name;type:varchar(128);comment:关联用户名" json:"connect_user_name"`                                                                   // 关联用户名
-	ConnectNickName      string     `gorm:"column:connect_nick_name;type:varchar(128);comment:关联昵称" json:"connect_nick_name"`                                                                      // 关联昵称
+	ConnectNickname      string     `gorm:"column:connect_nickname;type:varchar(128);comment:关联昵称" json:"connect_nickname"`                                                                      // 关联昵称
 	IsEnabled            *uint32    `gorm:"column:is_enabled;type:tinyint unsigned;not null;default:1;comment:是否有效0.无效/1.有效" json:"is_enabled"`                                                  // 是否有效0.无效/1.有效
 	MoreJSON             string     `gorm:"column:more_json;type:json;comment:扩展字段" json:"more_json"`                                                                                            // 扩展字段
 	RefreshTokenExpireAt *time.Time `gorm:"column:refresh_token_expire_at;type:timestamp;index:idx_refresh_token_expire_at,priority:1;comment:授权RefreshToken有效期" json:"refresh_token_expire_at"` // 授权RefreshToken有效期

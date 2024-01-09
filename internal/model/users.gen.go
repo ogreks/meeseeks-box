@@ -16,7 +16,7 @@ type User struct {
 	AccountID      uint64     `gorm:"column:account_id;type:bigint unsigned;not null;uniqueIndex:idx_users_account_id,priority:1;comment:用户所属账户" json:"account_id"`                                // 用户所属账户
 	UserName       string     `gorm:"column:user_name;type:varchar(64);uniqueIndex:idx_users_user_name,priority:1;comment:用户名" json:"user_name"`                                                   // 用户名
 	NickName       string     `gorm:"column:nick_name;type:varchar(64);comment:昵称" json:"nick_name"`                                                                                               // 昵称
-	Password       string     `gorm:"column:password;type:char(64);not null;comment:密码" json:"password"`                                                                                           // 密码
+	Password       string     `gorm:"column:password;type:char(64);comment:密码" json:"password"`                                                                                                    // 密码
 	Gender         *uint32    `gorm:"column:gender;type:tinyint unsigned;not null;default:1;comment:性别" json:"gender"`                                                                             // 性别
 	Bio            string     `gorm:"column:bio;type:text;comment:个人简介" json:"bio"`                                                                                                                // 个人简介
 	LastActivityAt *time.Time `gorm:"column:last_activity_at;type:timestamp;comment:最后活跃时间" json:"last_activity_at"`                                                                               // 最后活跃时间
