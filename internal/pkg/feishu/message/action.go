@@ -15,9 +15,7 @@ type Action interface {
 	Execute(a *ActionInfo, m MessageHandleInterface) bool
 }
 
-type BaseAction struct {
-	Prefix []string
-}
+type BaseAction struct{}
 
 // Helper help message
 func (b BaseAction) Helper() []string { return nil }
@@ -93,6 +91,26 @@ func SendHelperCard(actions ...Action) string {
 	newCard, _ := aide.NewSendCard(
 		aide.WithCardHeader(larkcard.TemplateBlue, "🎒需要帮助吗？"),
 		elements...,
+	)
+
+	return newCard
+}
+
+// SendStartCard
+func SendStartCard() string {
+	newCard, _ := aide.NewSendCard(
+		aide.WithCardHeader(larkcard.TemplateBlue, "📒Hello，World!"),
+		aide.WithCardMdContent(
+			`**🤠你好呀~ 我是使命必达盒，一个出自瑞克莫蒂动漫的虚拟助手！**
+
+欢迎使用 Meeseeks Box's，我支持很多奇奇怪怪的功能，当然这些都需要你去发掘
+
+同时我也支持基础任务的编辑和操作 **目前仍在开发中**
+
+[点我前往查看](https://no0overtime0group.feishu.cn/docx/TQSkdZizGoeFbmxe0apcQncdnMe)
+
+🤖 如果你想知道我的快捷指令请发送 **/help**`,
+		),
 	)
 
 	return newCard

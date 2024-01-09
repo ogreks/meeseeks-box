@@ -73,3 +73,31 @@ func (*VersionAction) Execute(a *ActionInfo, m MessageHandleInterface) bool {
 
 	return true
 }
+
+// StartAction /start
+type StartAction struct {
+	BaseAction
+}
+
+func (*StartAction) Execute(a *ActionInfo, m MessageHandleInterface) bool {
+	if a.Info.HandlerType != UserHandler {
+		return true
+	}
+
+	_, e := aide.EitherTrimEqual(
+		a.Info.QParsed,
+		"/start",
+	)
+
+	if e {
+		m.SendMessage(
+			*a.Ctx,
+			SendStartCard(),
+			larkim.MsgTypeInteractive,
+			a.Info,
+		)
+		return false
+	}
+
+	return true
+}

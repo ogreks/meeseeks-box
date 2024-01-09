@@ -49,6 +49,8 @@ type MessageHandleInterface interface {
 
 	Reply(ctx context.Context, messageId string, message string, msgType string) error
 	ReplyJudgeMessage(ctx context.Context, content string, msgType string, message *Message) error
+
+	SendMessage(ctx context.Context, content string, msgType string, message *Message) error
 }
 
 func (m *MessageHandle) RegisterAction(action Action) MessageHandleInterface {
@@ -82,25 +84,12 @@ func (m *MessageHandle) Reply(ctx context.Context, messageId string, message str
 	return nil
 }
 
-// ReplyJudgeMessage
-func (m *MessageHandle) ReplyJudgeMessage(
+func (m *MessageHandle) SendMessage(
 	ctx context.Context,
 	content string,
 	msgType string,
 	message *Message,
 ) error {
-	if message.HandlerType == GroupHandler {
-		return m.Reply(
-			ctx,
-			*message.MsgId,
-			content,
-			msgType,
-		)
-	}
-
-	fmt.Println(content)
-	fmt.Println(message.Sender.SenderId)
-	// TODO p2p send message
 	msg, err := m.cli.Im.Message.Create(
 		ctx,
 		larkim.NewCreateMessageReqBuilder().
@@ -120,12 +109,32 @@ func (m *MessageHandle) ReplyJudgeMessage(
 	}
 
 	if !msg.Success() {
+		// TODO logger
 		fmt.Printf("err：%+v\n", msg.CodeError.Err)
 	}
 
-	fmt.Printf("%v\n", msg)
+	fmt.Printf("回复消息：%v\n", msg)
 
 	return nil
+}
+
+// ReplyJudgeMessage
+func (m *MessageHandle) ReplyJudgeMessage(
+	ctx context.Context,
+	content string,
+	msgType string,
+	message *Message,
+) error {
+	if message.HandlerType == GroupHandler {
+		return m.Reply(
+			ctx,
+			*message.MsgId,
+			content,
+			msgType,
+		)
+	}
+
+	return m.SendMessage(ctx, content, msgType, message)
 }
 
 // chain of responsibility

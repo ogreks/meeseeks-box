@@ -37,6 +37,7 @@ func NewMessageHandler(cli *lark.Client, opts ...MessageHandleOptions) MessageHa
 	// register action
 	m.RegisterActions(
 		&EmptyAction{},
+		&StartAction{},
 		&VersionAction{},
 		&HelpAction{},
 	)
