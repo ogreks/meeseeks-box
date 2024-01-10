@@ -17,6 +17,11 @@ type Handler interface {
 	// @Router /api/user/login [post]
 	Login(*gin.Context)
 
+	// LoginGITHub login by github account
+	// @Tags API.User
+	// @Router /api/user/github/login [post]
+	LoginGITHub(ctx *gin.Context)
+
 	// Register user register
 	// @Tags API.User
 	// @Router /api/user/register [post]

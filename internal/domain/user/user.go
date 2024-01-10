@@ -14,14 +14,19 @@ import (
 )
 
 var (
-	AccountNotFound = errors.New("account not found")
-	UserNotFound    = errors.New("user not found")
+	UserNotFound           = errors.New("user not found")
+	AccountNotFound        = errors.New("account not found")
+	AccountConnectNotFound = errors.New("account connect not found")
 )
 
 type UDomain interface {
 	CreateUser(ctx context.Context, account model.Account, user model.User) error
-	FindAccount(ctx context.Context, account model.Account) (*model.Account, error)
+	CreatePlatformAccount(ctx context.Context, account model.Account, accountConnect model.AccountConnect, user model.User) error
+
 	FindUser(ctx context.Context, user model.User) (*model.User, error)
+	FindAccount(ctx context.Context, account model.Account) (*model.Account, error)
+	FindAccountConnect(ctx context.Context, connectID uint32, connectAccountID string) (*model.AccountConnect, error)
+
 	UpdateLastLoginAtByAccountId(ctx context.Context, Aid uint64, t time.Time) error
 }
 
@@ -55,6 +60,31 @@ func (s *User) CreateUser(ctx context.Context, account model.Account, user model
 	})
 
 	return err
+}
+
+// CreatePlatformAccount create user by connect platform account
+func (s *User) CreatePlatformAccount(ctx context.Context, account model.Account, accountConnect model.AccountConnect, user model.User) error {
+	return s.dao.Transaction(func(tx *dao.Query) error {
+		err := tx.Account.WithContext(ctx).Create(&account)
+		if err != nil {
+			return err
+		}
+
+		if accountConnect.AccountID == 0 {
+			accountConnect.AccountID = account.ID
+		}
+
+		err = tx.AccountConnect.WithContext(ctx).Create(&accountConnect)
+		if err != nil {
+			return err
+		}
+
+		if user.AccountID == 0 {
+			user.AccountID = account.ID
+		}
+
+		return tx.User.WithContext(ctx).Create(&user)
+	})
 }
 
 // UpdateLastLoginAtByAccountId update last login time by account id
@@ -97,4 +127,19 @@ func (s *User) FindUser(ctx context.Context, user model.User) (*model.User, erro
 	}
 
 	return u, err
+}
+
+// FindAccountConnect get connect platform account
+func (s *User) FindAccountConnect(ctx context.Context, connectID uint32, connectAccountID string) (*model.AccountConnect, error) {
+	accountConnect, err := s.dao.AccountConnect.
+		WithContext(ctx).
+		Where(s.dao.AccountConnect.ConnectPlatformID.Eq(connectID)).
+		Where(s.dao.AccountConnect.ConnectAccountID.Eq(connectAccountID)).
+		First()
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, AccountConnectNotFound
+	}
+
+	return accountConnect, err
 }

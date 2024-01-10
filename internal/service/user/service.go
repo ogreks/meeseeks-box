@@ -17,6 +17,9 @@ type Service interface {
 	CreateUserByEmail(ctx context.Context, uid, email, password string) error
 	// GetUserByUserName get user by userName
 	GetUserByUserName(ctx context.Context, userName string, password string) (*UserAccount, error)
+
+	// LoginUserByGITHub login by github account or register user
+	LoginUserByGITHub(ctx context.Context, account AccountPlatform) (*UserAccount, error)
 }
 
 type service struct {
