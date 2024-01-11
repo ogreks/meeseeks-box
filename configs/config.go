@@ -15,6 +15,7 @@ type Config struct {
 	// TODO watch config file change broadcast notification
 	watch    chan Config
 	Server   Server   `mapstructure:"server"`
+	RCache   RCache   `mapstructure:"rcache"`
 	Database Database `mapstructure:"database"`
 	Log      Log      `mapstructure:"log"`
 	Jwt      Jwt      `mapstructure:"jwt"`

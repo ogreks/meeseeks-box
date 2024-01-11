@@ -25,6 +25,11 @@ database:
   source: meeseeks:meeseeks@tcp(localhost:3306)/meeseeks?charset=utf8mb4&parseTime=True&loc=Local
   log_path: ./log/sql.log
 
+# config.RCache
+rcache:
+  driver: localhost:6379
+  password: meeseeks
+
 # configs.Webhook
 webhook:
   feishu:

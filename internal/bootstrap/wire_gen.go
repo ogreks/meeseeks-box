@@ -24,6 +24,7 @@ func InitApiServer() *gin.Engine {
 	jwtMiddleware := api.InitJwtMiddleware(config)
 	client := ioc.InitLarkClient(config, logger)
 	messageHandleInterface := ioc.InitLarkMessageDispatcher(config, logger, repo, client)
-	engine := api.InitApiServer(repo, logger, v, jwtMiddleware, client, messageHandleInterface)
+	cmdable := ioc.NewRedisClient(config)
+	engine := api.InitApiServer(repo, logger, v, jwtMiddleware, client, messageHandleInterface, cmdable)
 	return engine
 }

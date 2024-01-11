@@ -32,17 +32,15 @@ import (
 // @Security Login
 func (h *handler) LoginGITHub(ctx *gin.Context) {
 	type githubReq struct {
-		ConnectAccountID string `json:"connect_account_id" bind:"required"`
+		Token        string `json:"token" binding:"required"`
+		RefreshToken string `json:"refresh_token" binding:"required"`
+		ExpireAt     int    `json:"expire_at" binding:"required"`
 
-		Token        string `json:"token" bind:"required"`
-		RefreshToken string `json:"refresh_token" bind:"required"`
-		ExpireAt     int    `json:"expire_at"`
-
-		ID       int    `json:"id"`
-		NickName string `json:"nickname"`
-		Name     string `json:"name"`
-		Email    string `json:"email"`
-		Options  string `json:"options"`
+		ID       int    `json:"id" binding:"required"`
+		NickName string `json:"nickname" binding:"required"`
+		Name     string `json:"name" binding:"required"`
+		Email    string `json:"email" binding:"required"`
+		Options  string `json:"options" binding:"required"`
 	}
 
 	var r githubReq
@@ -55,11 +53,11 @@ func (h *handler) LoginGITHub(ctx *gin.Context) {
 		return
 	}
 
-	refreshTokenTimeAt := time.Now().Add((time.Duration(r.ExpireAt) - 10) * time.Second)
+	refreshTokenTimeAt := time.Now().Add(time.Duration(r.ExpireAt-10) * time.Second)
 	ac, err := h.service.LoginUserByGITHub(ctx.Request.Context(), UserSvc.AccountPlatform{
 		Aid:                  xid.New().String(),
 		PlatformID:           1,
-		AccountID:            r.ConnectAccountID,
+		AccountID:            fmt.Sprintf("%d", r.ID),
 		Token:                r.Token,
 		RefreshToken:         r.RefreshToken,
 		RefreshTokenExpireAt: &refreshTokenTimeAt,

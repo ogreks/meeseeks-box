@@ -1,7 +1,12 @@
 package api
 
 import (
+	"net"
+	"net/http"
+	"time"
+
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis"
 	"github.com/golang-jwt/jwt"
 	lark "github.com/larksuite/oapi-sdk-go/v3"
 	"github.com/ogreks/meeseeks-box/configs"
@@ -19,8 +24,11 @@ func InitApiServer(
 	jwtMiddleware *middleware.JwtMiddleware, // jwt middleware
 	client *lark.Client, // feishu client
 	msg feishuMessage.MessageHandleInterface, // feishu message event
+	rcache redis.Cmdable, // redis client cache
 ) *gin.Engine {
 	g := gin.New()
+
+	InitServiceRoute(g)
 
 	g.Use(middlewares...)
 
@@ -35,6 +43,74 @@ func InitApiServer(
 	return g
 }
 
+// InitTestRoute init debug register hello router
+func InitTestRoute(g *gin.Engine) {
+	g.GET("/hello", func(ctx *gin.Context) {
+		netAddr, err := net.InterfaceAddrs()
+		if err != nil {
+			ctx.AbortWithStatus(http.StatusInternalServerError)
+			return
+		}
+
+		var ipAdders []string
+		for _, addr := range netAddr {
+			ip, ok := addr.(*net.IPNet)
+			if ok && !ip.IP.IsLoopback() {
+				if ip.IP.To4() != nil {
+					ipAdders = append(ipAdders, ip.IP.String())
+				}
+			}
+		}
+
+		ctx.JSON(http.StatusOK, gin.H{
+			"code": 200,
+			"msg":  "Hello friends from far away",
+			"data": gin.H{
+				"ips": ipAdders,
+			},
+		})
+	})
+}
+
+// InitServerStatus register server run time
+func InitServerStatus(g *gin.Engine) {
+	registerTime := time.Now()
+	g.GET("/status", func(ctx *gin.Context) {
+		ctx.JSON(http.StatusOK, gin.H{
+			"code": 200,
+			"msg":  "success",
+			"data": gin.H{
+				"register_time": registerTime.Format(time.RFC3339),
+				"run_time":      time.Now().Sub(registerTime).String(),
+				"now_time":      time.Now().Format(time.RFC3339),
+			},
+		})
+	})
+}
+
+// InitNotRoute register router common service
+// register 404 route not found
+// register 405 route method not found
+func InitServiceRoute(g *gin.Engine) {
+
+	g.NoRoute(func(ctx *gin.Context) {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"code": http.StatusNotFound,
+			"msg":  "route not found",
+			"data": gin.H{},
+		})
+	})
+
+	g.NoMethod(func(ctx *gin.Context) {
+		ctx.JSON(http.StatusMethodNotAllowed, gin.H{
+			"code": http.StatusMethodNotAllowed,
+			"msg":  "route method not allowed",
+			"data": gin.H{},
+		})
+	})
+}
+
+// InitMiddleware init middleware
 func InitMiddleware(logger *zap.Logger) []gin.HandlerFunc {
 	return []gin.HandlerFunc{
 		middleware.Recovery(logger),
@@ -42,6 +118,7 @@ func InitMiddleware(logger *zap.Logger) []gin.HandlerFunc {
 	}
 }
 
+// InitJwtMiddleware init jwt middleware
 func InitJwtMiddleware(cfg configs.Config) *middleware.JwtMiddleware {
 	return middleware.NewJWTMiddleware(
 		middleware.WithKeyFunc(func() (any, error) {

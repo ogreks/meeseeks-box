@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"net"
 	"net/http"
 	"time"
 
@@ -50,45 +49,6 @@ func (a *server) Start(ctx context.Context) error {
 	if configs.GetConfig().GetServer().Debug {
 		gin.SetMode(gin.DebugMode)
 	}
-
-	server.GET("/hello", func(ctx *gin.Context) {
-		netAddr, err := net.InterfaceAddrs()
-		if err != nil {
-			ctx.AbortWithStatus(http.StatusInternalServerError)
-			return
-		}
-
-		var ipAdders []string
-		for _, addr := range netAddr {
-			ip, ok := addr.(*net.IPNet)
-			if ok && !ip.IP.IsLoopback() {
-				if ip.IP.To4() != nil {
-					ipAdders = append(ipAdders, ip.IP.String())
-				}
-			}
-		}
-
-		ctx.JSON(http.StatusOK, gin.H{
-			"code": 200,
-			"msg":  "Hello friends from far away",
-			"data": gin.H{
-				"ips": ipAdders,
-			},
-		})
-	})
-
-	registerTime := time.Now()
-	server.GET("/status", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{
-			"code": 200,
-			"msg":  "success",
-			"data": gin.H{
-				"register_time": registerTime.Format(time.RFC3339),
-				"run_time":      time.Now().Sub(registerTime).String(),
-				"now_time":      time.Now().Format(time.RFC3339),
-			},
-		})
-	})
 
 	return utils.Run(ctx, l, func(ctx context.Context) (func(), error) {
 		httpSvc := &http.Server{

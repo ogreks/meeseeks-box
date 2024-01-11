@@ -18,6 +18,8 @@ func InitApiServer() *gin.Engine {
 		// init logger
 		ioc.InitLogDriver,
 		ioc.InitLogger,
+		// init rcache
+		ioc.NewRedisClient,
 		// init orm
 		ioc.InitORM,
 		// web hook

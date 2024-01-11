@@ -21,6 +21,10 @@
 # Go workspace file
 go.work
 
+# conf
+/var/cache/*.conf
+/var/db/
+
 # code editor
 .vscode
 .idea

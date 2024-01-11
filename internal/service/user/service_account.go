@@ -71,7 +71,7 @@ func (s *service) CreatePlatformAccount(ctx context.Context, account AccountPlat
 			ConnectToken:         account.Token,
 			ConnectRefreshToken:  account.RefreshToken,
 			ConnectUserName:      account.UserName,
-			ConnectNickname:      account.NickName,
+			ConnectNickName:      account.NickName,
 			MoreJSON:             account.MoreJson,
 			RefreshTokenExpireAt: account.RefreshTokenExpireAt,
 		},

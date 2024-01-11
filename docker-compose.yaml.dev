@@ -11,4 +11,25 @@ services:
       MYSQL_USER: meeseeks
       MYSQL_PASSWORD: meeseeks
     ports:
-      - 3306:3306
+      - 13306:3306
+    volumes:
+      - ./var/db/:/var/lib/mysql
+    networks:
+      - meeseeks-network
+  cache:
+    image: redis:7.2.4-alpine
+    container_name: cache
+    restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - ./var/cache/:/etc/redis/
+      - ./var/cache/d:/data/
+    command: redis-server /etc/redis/redis.conf
+    networks:
+      - meeseeks-network
+
+networks:
+  meeseeks-network:
+    name: meeseeks-network
+    driver: bridge

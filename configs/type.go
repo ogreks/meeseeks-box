@@ -38,6 +38,13 @@ type Database struct {
 	LogPath string `mapstructure:"log_path"`
 }
 
+type RCache struct {
+	// driver localhost:6379
+	Driver string `mapstructure:"driver"`
+	// password auth redis password
+	Password string `mapstructure:"password"`
+}
+
 type Server struct {
 	// server debug mode (default: true)
 	Debug bool `mapstructure:"debug"`

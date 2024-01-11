@@ -25,6 +25,7 @@ func (uRoute *UserRouter) Register(r *gin.Engine) *UserRouter {
 	{
 		userRouter.POST("/login", uRoute.userHandle.Login)
 		userRouter.POST("/register", uRoute.userHandle.Register)
+		userRouter.POST("/github/login", uRoute.userHandle.LoginGITHub)
 
 		mUserRouter := userRouter.Group("/", uRoute.jwtMiddleware.Builder())
 		{

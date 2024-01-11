@@ -34,7 +34,7 @@ func newAccountConnect(db *gorm.DB, opts ...gen.DOOption) accountConnect {
 	_accountConnect.ConnectToken = field.NewString(tableName, "connect_token")
 	_accountConnect.ConnectRefreshToken = field.NewString(tableName, "connect_refresh_token")
 	_accountConnect.ConnectUserName = field.NewString(tableName, "connect_user_name")
-	_accountConnect.ConnectNickname = field.NewString(tableName, "connect_nickname")
+	_accountConnect.ConnectNickName = field.NewString(tableName, "connect_nick_name")
 	_accountConnect.IsEnabled = field.NewUint32(tableName, "is_enabled")
 	_accountConnect.MoreJSON = field.NewString(tableName, "more_json")
 	_accountConnect.RefreshTokenExpireAt = field.NewTime(tableName, "refresh_token_expire_at")
@@ -58,7 +58,7 @@ type accountConnect struct {
 	ConnectToken         field.String
 	ConnectRefreshToken  field.String
 	ConnectUserName      field.String // 关联用户名
-	ConnectNickname      field.String // 关联昵称
+	ConnectNickName      field.String // 关联昵称
 	IsEnabled            field.Uint32 // 是否有效0.无效/1.有效
 	MoreJSON             field.String // 扩展字段
 	RefreshTokenExpireAt field.Time   // 授权RefreshToken有效期
@@ -88,7 +88,7 @@ func (a *accountConnect) updateTableName(table string) *accountConnect {
 	a.ConnectToken = field.NewString(table, "connect_token")
 	a.ConnectRefreshToken = field.NewString(table, "connect_refresh_token")
 	a.ConnectUserName = field.NewString(table, "connect_user_name")
-	a.ConnectNickname = field.NewString(table, "connect_nickname")
+	a.ConnectNickName = field.NewString(table, "connect_nick_name")
 	a.IsEnabled = field.NewUint32(table, "is_enabled")
 	a.MoreJSON = field.NewString(table, "more_json")
 	a.RefreshTokenExpireAt = field.NewTime(table, "refresh_token_expire_at")
@@ -119,7 +119,7 @@ func (a *accountConnect) fillFieldMap() {
 	a.fieldMap["connect_token"] = a.ConnectToken
 	a.fieldMap["connect_refresh_token"] = a.ConnectRefreshToken
 	a.fieldMap["connect_user_name"] = a.ConnectUserName
-	a.fieldMap["connect_nickname"] = a.ConnectNickname
+	a.fieldMap["connect_nick_name"] = a.ConnectNickName
 	a.fieldMap["is_enabled"] = a.IsEnabled
 	a.fieldMap["more_json"] = a.MoreJSON
 	a.fieldMap["refresh_token_expire_at"] = a.RefreshTokenExpireAt
