@@ -1,6 +1,14 @@
 package token
 
-import "github.com/golang-jwt/jwt"
+import (
+	"errors"
+
+	"github.com/golang-jwt/jwt"
+)
+
+var (
+	ErrNotString = errors.New("type is not string")
+)
 
 type (
 	Type interface {

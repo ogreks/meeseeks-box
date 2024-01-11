@@ -24,15 +24,15 @@ func Test_DefaultStore(t *testing.T) {
 
 	testCases := []struct {
 		name   string
-		before func(t *testing.T, store *DefaultStore[string])
-		after  func(t *testing.T, store *DefaultStore[string])
+		before func(t *testing.T, store Store[string])
+		after  func(t *testing.T, store Store[string])
 		token  string
 		expire time.Duration
 	}{
 		{
 			name:   "set token",
-			before: func(t *testing.T, store *DefaultStore[string]) {},
-			after: func(t *testing.T, store *DefaultStore[string]) {
+			before: func(t *testing.T, store Store[string]) {},
+			after: func(t *testing.T, store Store[string]) {
 				assert.Equal(t, true, store.Exists("test"))
 				assert.NoError(t, store.Delete("test"))
 			},
@@ -41,8 +41,8 @@ func Test_DefaultStore(t *testing.T) {
 		},
 		{
 			name:   "delete token",
-			before: func(t *testing.T, store *DefaultStore[string]) {},
-			after: func(t *testing.T, store *DefaultStore[string]) {
+			before: func(t *testing.T, store Store[string]) {},
+			after: func(t *testing.T, store Store[string]) {
 				assert.NoError(t, store.Delete("test"))
 			},
 			token:  "test",
@@ -50,10 +50,10 @@ func Test_DefaultStore(t *testing.T) {
 		},
 		{
 			name: "exists token",
-			before: func(t *testing.T, store *DefaultStore[string]) {
+			before: func(t *testing.T, store Store[string]) {
 				assert.NoError(t, store.Set("test", 1*time.Second))
 			},
-			after: func(t *testing.T, store *DefaultStore[string]) {
+			after: func(t *testing.T, store Store[string]) {
 				assert.Equal(t, false, store.Exists("test"))
 				assert.NoError(t, store.Delete("test"))
 			},

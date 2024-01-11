@@ -12,6 +12,7 @@ import (
 	"github.com/ogreks/meeseeks-box/configs"
 	feishuMessage "github.com/ogreks/meeseeks-box/internal/pkg/feishu/message"
 	"github.com/ogreks/meeseeks-box/internal/pkg/middleware"
+	"github.com/ogreks/meeseeks-box/internal/pkg/token"
 	"github.com/ogreks/meeseeks-box/internal/repository/orm"
 	"github.com/ogreks/meeseeks-box/internal/router"
 	"go.uber.org/zap"
@@ -25,10 +26,17 @@ func InitApiServer(
 	client *lark.Client, // feishu client
 	msg feishuMessage.MessageHandleInterface, // feishu message event
 	rcache redis.Cmdable, // redis client cache
+	tokenStore token.Store[string], // store token server
 ) *gin.Engine {
 	g := gin.New()
 
+	if configs.GetConfig().Server.Debug {
+		InitTestRoute(g)
+		gin.SetMode(gin.DebugMode)
+	}
+
 	InitServiceRoute(g)
+	InitServerStatus(g)
 
 	g.Use(middlewares...)
 
@@ -93,18 +101,18 @@ func InitServerStatus(g *gin.Engine) {
 // register 405 route method not found
 func InitServiceRoute(g *gin.Engine) {
 
-	g.NoRoute(func(ctx *gin.Context) {
-		ctx.JSON(http.StatusNotFound, gin.H{
-			"code": http.StatusNotFound,
-			"msg":  "route not found",
-			"data": gin.H{},
-		})
-	})
-
 	g.NoMethod(func(ctx *gin.Context) {
 		ctx.JSON(http.StatusMethodNotAllowed, gin.H{
 			"code": http.StatusMethodNotAllowed,
 			"msg":  "route method not allowed",
+			"data": gin.H{},
+		})
+	})
+
+	g.NoRoute(func(ctx *gin.Context) {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"code": http.StatusNotFound,
+			"msg":  "route not found",
 			"data": gin.H{},
 		})
 	})

@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/ogreks/meeseeks-box/configs"
 	"github.com/ogreks/meeseeks-box/pkg/logger"
 	"github.com/ogreks/meeseeks-box/pkg/utils"
@@ -45,10 +44,6 @@ func (a *server) Start(ctx context.Context) error {
 	l := initLogger()
 
 	server := InitApiServer()
-
-	if configs.GetConfig().GetServer().Debug {
-		gin.SetMode(gin.DebugMode)
-	}
 
 	return utils.Run(ctx, l, func(ctx context.Context) (func(), error) {
 		httpSvc := &http.Server{

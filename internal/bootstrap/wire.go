@@ -22,6 +22,8 @@ func InitApiServer() *gin.Engine {
 		ioc.NewRedisClient,
 		// init orm
 		ioc.InitORM,
+		// init token
+		ioc.NewStore,
 		// web hook
 		ioc.InitLarkClient,
 		ioc.InitLarkMessageDispatcher,

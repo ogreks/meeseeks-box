@@ -23,17 +23,15 @@ require (
 	gorm.io/plugin/dbresolver v1.3.0
 )
 
-require go.uber.org/atomic v1.11.0
+require (
+	go.uber.org/atomic v1.11.0
+	go.uber.org/mock v0.4.0
+)
 
 require (
-	github.com/bradleyfalzon/ghinstallation/v2 v2.8.0 // indirect
-	github.com/cespare/xxhash/v2 v2.2.0 // indirect
-	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
-	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
-	github.com/google/go-github/v56 v56.0.0 // indirect
-	github.com/google/go-github/v57 v57.0.0 // indirect
-	github.com/google/go-querystring v1.1.0 // indirect
-	github.com/redis/go-redis/v9 v9.4.0 // indirect
+	github.com/google/go-cmp v0.6.0 // indirect
+	github.com/onsi/ginkgo v1.16.5 // indirect
+	github.com/onsi/gomega v1.30.0 // indirect
 )
 
 require (

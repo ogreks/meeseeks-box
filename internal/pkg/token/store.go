@@ -14,6 +14,7 @@ import (
 	"go.uber.org/zap"
 )
 
+//go:generate mockgen -source=./store.go -package=tkmocks -destination=mocks/store.mock.go Store
 type Store[T Type] interface {
 	// Set a token to the store with the specified expiry time.
 	Set(token T, expiry time.Duration) error
@@ -25,7 +26,7 @@ type Store[T Type] interface {
 	Shutdown(ctx context.Context) <-chan error
 }
 
-type DefaultStore[T string] struct {
+type DefaultStore[T Type] struct {
 	file *os.File
 
 	lock *sync.RWMutex
@@ -163,7 +164,7 @@ func (ds *DefaultStore[T]) shutdown(ctx context.Context) (err error) {
 	return
 }
 
-func NewDefaultStore[T string](file string, logger *zap.Logger) (*DefaultStore[T], error) {
+func NewDefaultStore[T Type](file string, logger *zap.Logger) (Store[T], error) {
 	f, err := os.OpenFile(file, os.O_CREATE|os.O_RDWR|os.O_SYNC|os.O_TRUNC, 0666)
 	if err != nil {
 		return nil, err

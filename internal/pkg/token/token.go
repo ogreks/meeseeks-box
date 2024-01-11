@@ -1,6 +1,7 @@
 package token
 
 import (
+	"context"
 	"errors"
 	"time"
 
@@ -12,13 +13,14 @@ var (
 	ErrInvalidKey    = errors.New("key is invalid")
 )
 
+//go:generate mockgen -source=./token.go -package=tkmocks -destination=mocks/token.mock.go Token
 type Token[T Type, V Val] interface {
 	// CreateToken creates a new token.
-	CreateToken(v ...V) (T, error)
+	CreateToken(ctx context.Context, v ...V) (T, error)
 
 	// RefreshToken creates a new refresh token.
 	// The old token is revoked or set token to expire.
-	RefreshToken(token ...T) (T, error)
+	RefreshToken(ctx context.Context, token *T, v ...V) (T, error)
 
 	// Validate validates a token.
 	Validate(token T) error
@@ -61,9 +63,9 @@ func WithFun[T string, F Fun](f F) Option[T, F] {
 // jwt claim token to string
 // `f` is a function that returns jwt.SigningMethod, []byte, jwt.Claims
 // not `f` is struct dt.f
-func (dt *DefaultToken[T, F]) CreateToken(f ...F) (T, error) {
+func (dt *DefaultToken[T, F]) CreateToken(ctx context.Context, f ...F) (T, error) {
 	if len(f) <= 0 {
-		f[0] = dt.f
+		f = []F{dt.f}
 	}
 	method, secret, claim := f[0]()
 	token := jwt.NewWithClaims(method, claim)
@@ -86,27 +88,29 @@ func (dt *DefaultToken[T, F]) CreateToken(f ...F) (T, error) {
 // RefreshToken creates a new refresh token.
 // The old token is revoked or set token to expire.
 // `token` is the old token.
-func (dt *DefaultToken[T, F]) RefreshToken(token ...T) (T, error) {
-	if len(token) <= 0 {
+func (dt *DefaultToken[T, F]) RefreshToken(ctx context.Context, token *T, f ...F) (T, error) {
+	if token == nil {
 		t, err := dt.Token.SigningString()
 		if err != nil {
 			return "", err
 		}
 
-		token[0] = T(t)
+		tk := T(t)
+
+		token = &tk
 	}
 
-	err := dt.Validate(token[0])
+	err := dt.Validate(*token)
 	if err != nil {
 		return "", err
 	}
 
-	err = dt.Store().Delete(token[0])
+	err = dt.Store().Delete(*token)
 	if err != nil {
 		return "", err
 	}
 
-	return dt.CreateToken()
+	return dt.CreateToken(ctx, f...)
 }
 
 // Validate validates a token.
