@@ -77,8 +77,7 @@ func (ds *DefaultStore[T]) sync() error {
 			}
 		case <-ds.interrupter:
 			signal.Stop(ds.interrupter)
-			ds.complete <- errors.New("interrupt closed")
-			return nil
+			return errors.New("interrupt closed")
 		}
 	}
 }
@@ -88,7 +87,7 @@ func (ds *DefaultStore[T]) loadSyncMap() {
 	defer ds.lock.Unlock()
 
 	var buffer = make([]byte, 1024)
-	ret := []byte{}
+	var ret []byte
 
 	for {
 		readLength, err := ds.file.Read(buffer)
@@ -187,35 +186,35 @@ func NewDefaultStore[T Type](file string, logger *zap.Logger) (Store[T], error) 
 	return d, nil
 }
 
-func (d *DefaultStore[T]) Set(token T, expiry time.Duration) error {
-	d.lock.Lock()
-	defer d.lock.Unlock()
+func (ds *DefaultStore[T]) Set(token T, expiry time.Duration) error {
+	ds.lock.Lock()
+	defer ds.lock.Unlock()
 
-	d.container.Store(token, time.Now().Add(expiry))
+	ds.container.Store(token, time.Now().Add(expiry))
 
 	return nil
 }
 
-func (d *DefaultStore[T]) Exists(token T) bool {
-	value, ok := d.container.Load(token)
+func (ds *DefaultStore[T]) Exists(token T) bool {
+	value, ok := ds.container.Load(token)
 
 	if !ok {
 		return false
 	}
 
 	if value.(time.Time).Before(time.Now()) {
-		d.container.Delete(token)
+		ds.container.Delete(token)
 		return false
 	}
 
 	return true
 }
 
-func (d *DefaultStore[T]) Delete(token T) error {
-	d.lock.Lock()
-	defer d.lock.Unlock()
+func (ds *DefaultStore[T]) Delete(token T) error {
+	ds.lock.Lock()
+	defer ds.lock.Unlock()
 
-	d.container.Delete(token)
+	ds.container.Delete(token)
 
 	return nil
 }

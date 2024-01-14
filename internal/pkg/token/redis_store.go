@@ -2,6 +2,7 @@ package token
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/go-redis/redis"
@@ -30,7 +31,7 @@ func (rs *RStore[T]) Exists(token T) bool {
 
 func (rs *RStore[T]) Delete(token T) error {
 	_, e := rs.c.Del(string(token)).Result()
-	if e != nil && e != redis.Nil {
+	if e != nil && !errors.Is(e, redis.Nil) {
 		return e
 	}
 

@@ -2,21 +2,30 @@ package user
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt"
 	userHandler "github.com/ogreks/meeseeks-box/internal/api/user"
-	"github.com/ogreks/meeseeks-box/internal/pkg/middleware"
+	userJwt "github.com/ogreks/meeseeks-box/internal/pkg/middleware/auth"
+	"github.com/ogreks/meeseeks-box/internal/pkg/token"
 	"github.com/ogreks/meeseeks-box/internal/repository/orm"
 	"go.uber.org/zap"
 )
 
 type UserRouter struct {
 	userHandle    userHandler.Handler
-	jwtMiddleware *middleware.JwtMiddleware
+	jwtMiddleware *userJwt.UserJwtMiddleware
+	TokenManager  token.Token[string, func() (jwt.SigningMethod, []byte)]
 }
 
-func NewUserRouter(db orm.Repo, logger *zap.Logger, jwtMiddleware *middleware.JwtMiddleware) *UserRouter {
+func NewUserRouter(
+	db orm.Repo,
+	logger *zap.Logger,
+	jwtMiddleware *userJwt.UserJwtMiddleware,
+	token token.Token[string, func() (jwt.SigningMethod, []byte)],
+) *UserRouter {
 	return &UserRouter{
+		TokenManager:  token,
 		jwtMiddleware: jwtMiddleware,
-		userHandle:    userHandler.New(db, logger),
+		userHandle:    userHandler.New(db, logger, token),
 	}
 }
 

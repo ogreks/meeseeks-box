@@ -31,5 +31,4 @@ services:
 
 networks:
   meeseeks-network:
-    name: meeseeks-network
     driver: bridge

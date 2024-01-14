@@ -14,10 +14,13 @@ import (
 var (
 	ErrorAccountOrPassword = errors.New("account or password error")
 	ErrorAccountNotEnable  = errors.New("account is not enable")
+	ErrorAccountNotFound   = errors.New("account not found")
+	ErrorUserNotFound      = errors.New("user not found")
 )
 
 type UserAccount struct {
-	Aid string `json:"account_id"`
+	Aid         string    `json:"account_id"`
+	LastLoginAt time.Time `json:"last_login_at"`
 }
 
 // CreateUserByUserName create user by userName
@@ -83,6 +86,7 @@ func (s *service) GetUserByUserName(ctx context.Context, userName string, passwo
 	}(account.ID, time.Now())
 
 	return &UserAccount{
-		Aid: account.Aid,
+		Aid:         account.Aid,
+		LastLoginAt: *account.LastLoginAt,
 	}, nil
 }

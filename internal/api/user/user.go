@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	ujwt "github.com/ogreks/meeseeks-box/internal/pkg/middleware/auth"
 	"net/http"
 	"time"
 
@@ -251,9 +252,49 @@ func (h *handler) Register(ctx *gin.Context) {
 }
 
 func (h *handler) Me(ctx *gin.Context) {
+	claims, ok := ctx.Get("claims")
+	if !ok {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"code":    400,
+			"message": "bad request",
+			"data":    gin.H{},
+		})
+		return
+	}
+
+	c, ok := claims.(*ujwt.UserClaims)
+	if !ok {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"code":    400,
+			"message": "bad request",
+			"data":    gin.H{},
+		})
+		return
+	}
+
+	user, err := h.service.GetUserByAccountAid(ctx.Request.Context(), c.Content.(string))
+	if err != nil {
+		if errors.Is(err, UserSvc.ErrorUserNotFound) || errors.Is(err, UserSvc.ErrorAccountNotFound) {
+			ctx.JSON(http.StatusUnauthorized, gin.H{
+				"code":    401,
+				"message": "unauthorized",
+				"data":    gin.H{},
+			})
+			return
+		}
+
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"code":    500,
+			"message": "server error",
+			"data":    err.Error(),
+		})
+
+		return
+	}
+
 	ctx.JSON(http.StatusOK, gin.H{
 		"code":    200,
 		"message": "success",
-		"data":    gin.H{},
+		"data":    user,
 	})
 }

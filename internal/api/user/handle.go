@@ -2,6 +2,8 @@ package user
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt"
+	"github.com/ogreks/meeseeks-box/internal/pkg/token"
 	"github.com/ogreks/meeseeks-box/internal/repository/orm"
 	"github.com/ogreks/meeseeks-box/internal/service/user"
 	"go.uber.org/zap"
@@ -34,14 +36,16 @@ type Handler interface {
 }
 
 type handler struct {
-	logger  *zap.Logger
-	service user.Service
+	logger       *zap.Logger
+	service      user.Service
+	tokenManager token.Token[string, func() (jwt.SigningMethod, []byte)]
 }
 
-func New(db orm.Repo, logger *zap.Logger) Handler {
+func New(db orm.Repo, logger *zap.Logger, tkm token.Token[string, func() (jwt.SigningMethod, []byte)]) Handler {
 	return &handler{
-		logger:  logger,
-		service: user.New(db, logger),
+		logger:       logger,
+		service:      user.New(db, logger),
+		tokenManager: tkm,
 	}
 }
 

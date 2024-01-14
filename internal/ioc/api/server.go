@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis"
 	"github.com/golang-jwt/jwt"
 	lark "github.com/larksuite/oapi-sdk-go/v3"
 	"github.com/ogreks/meeseeks-box/configs"
@@ -23,9 +22,8 @@ func InitApiServer(
 	logger *zap.Logger, // log
 	middlewares []gin.HandlerFunc, // middleware
 	jwtMiddleware *middleware.JwtMiddleware, // jwt middleware
-	client *lark.Client, // feishu client
-	msg feishuMessage.MessageHandleInterface, // feishu message event
-	rcache redis.Cmdable, // redis client cache
+	client *lark.Client, // fei shu client
+	msg feishuMessage.MessageHandleInterface, // fei shu message event
 	tokenStore token.Store[string], // store token server
 ) *gin.Engine {
 	g := gin.New()
@@ -40,12 +38,13 @@ func InitApiServer(
 
 	g.Use(middlewares...)
 
-	_ = router.InitRouter(&router.RouterHandler{
+	_ = router.InitRouter(&router.Handler{
 		Engine:            g,
 		DB:                db,
 		Log:               logger,
 		AuthMiddleware:    jwtMiddleware,
 		MessageDispatcher: msg,
+		TokenStore:        tokenStore,
 	})
 
 	return g
@@ -96,7 +95,7 @@ func InitServerStatus(g *gin.Engine) {
 	})
 }
 
-// InitNotRoute register router common service
+// InitServiceRoute register router common service
 // register 404 route not found
 // register 405 route method not found
 func InitServiceRoute(g *gin.Engine) {

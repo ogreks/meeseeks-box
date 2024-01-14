@@ -20,6 +20,6 @@ type (
 	}
 
 	Fun interface {
-		func() (jwt.SigningMethod, []byte, jwt.Claims)
+		func() (jwt.SigningMethod, []byte)
 	}
 )

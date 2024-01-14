@@ -16,14 +16,14 @@ var (
 //go:generate mockgen -source=./token.go -package=tkmocks -destination=mocks/token.mock.go Token
 type Token[T Type, V Val] interface {
 	// CreateToken creates a new token.
-	CreateToken(ctx context.Context, v ...V) (T, error)
+	CreateToken(ctx context.Context, claim jwt.Claims) (T, error)
 
 	// RefreshToken creates a new refresh token.
-	// The old token is revoked or set token to expire.
-	RefreshToken(ctx context.Context, token *T, v ...V) (T, error)
+	// The old token is revoked or set token to Expire.
+	RefreshToken(ctx context.Context, token *T, claim jwt.Claims) (T, error)
 
 	// Validate validates a token.
-	Validate(token T) error
+	Validate(token T) (jwt.Claims, error)
 
 	// Store returns the store used by the token.
 	Store() Store[T]
@@ -31,14 +31,16 @@ type Token[T Type, V Val] interface {
 
 type Option[T Type, V Val] func(Token[T, V])
 
-type DefaultToken[T string, F func() (jwt.SigningMethod, []byte, jwt.Claims)] struct {
+type DefaultToken[T string, F Fun] struct {
 	store Store[T]
 
 	f F
 
 	Token *jwt.Token
 
-	expire time.Duration
+	Expire time.Duration
+
+	claims jwt.Claims
 }
 
 func WithStore[T string, F Fun](store Store[T]) Option[T, F] {
@@ -49,7 +51,7 @@ func WithStore[T string, F Fun](store Store[T]) Option[T, F] {
 
 func WithExpire[T string, F Fun](expire time.Duration) Option[T, F] {
 	return func(t Token[T, F]) {
-		t.(*DefaultToken[T, F]).expire = expire
+		t.(*DefaultToken[T, F]).Expire = expire
 	}
 }
 
@@ -59,15 +61,18 @@ func WithFun[T string, F Fun](f F) Option[T, F] {
 	}
 }
 
+func WithClaims[T string, F Fun](claims jwt.Claims) Option[T, F] {
+	return func(t Token[T, F]) {
+		t.(*DefaultToken[T, F]).claims = claims
+	}
+}
+
 // CreateToken creates a new token.
 // jwt claim token to string
 // `f` is a function that returns jwt.SigningMethod, []byte, jwt.Claims
 // not `f` is struct dt.f
-func (dt *DefaultToken[T, F]) CreateToken(ctx context.Context, f ...F) (T, error) {
-	if len(f) <= 0 {
-		f = []F{dt.f}
-	}
-	method, secret, claim := f[0]()
+func (dt *DefaultToken[T, F]) CreateToken(ctx context.Context, claim jwt.Claims) (T, error) {
+	method, secret := dt.f()
 	token := jwt.NewWithClaims(method, claim)
 
 	dt.Token = token
@@ -77,7 +82,7 @@ func (dt *DefaultToken[T, F]) CreateToken(ctx context.Context, f ...F) (T, error
 		return "", err
 	}
 
-	err = dt.store.Set(T(signedString), dt.expire)
+	err = dt.store.Set(T(signedString), dt.Expire)
 	if err != nil {
 		return "", err
 	}
@@ -86,9 +91,9 @@ func (dt *DefaultToken[T, F]) CreateToken(ctx context.Context, f ...F) (T, error
 }
 
 // RefreshToken creates a new refresh token.
-// The old token is revoked or set token to expire.
+// The old token is revoked or set token to Expire.
 // `token` is the old token.
-func (dt *DefaultToken[T, F]) RefreshToken(ctx context.Context, token *T, f ...F) (T, error) {
+func (dt *DefaultToken[T, F]) RefreshToken(ctx context.Context, token *T, claim jwt.Claims) (T, error) {
 	if token == nil {
 		t, err := dt.Token.SigningString()
 		if err != nil {
@@ -100,7 +105,7 @@ func (dt *DefaultToken[T, F]) RefreshToken(ctx context.Context, token *T, f ...F
 		token = &tk
 	}
 
-	err := dt.Validate(*token)
+	_, err := dt.Validate(*token)
 	if err != nil {
 		return "", err
 	}
@@ -110,27 +115,27 @@ func (dt *DefaultToken[T, F]) RefreshToken(ctx context.Context, token *T, f ...F
 		return "", err
 	}
 
-	return dt.CreateToken(ctx, f...)
+	return dt.CreateToken(ctx, claim)
 }
 
 // Validate validates a token.
 // `f` is a function that returns jwt.SigningMethod, []byte, jwt.Claims
-func (dt *DefaultToken[T, F]) Validate(token T) error {
-	if dt.store.Exists(token) {
-		return ErrTokenNotFound
+func (dt *DefaultToken[T, F]) Validate(token T) (jwt.Claims, error) {
+	if !dt.store.Exists(token) {
+		return nil, ErrTokenNotFound
 	}
 
-	_, secret, claim := dt.f()
+	_, secret := dt.f()
 
-	_, err := jwt.ParseWithClaims(string(token), claim, func(token *jwt.Token) (interface{}, error) {
+	t, err := jwt.ParseWithClaims(string(token), dt.claims, func(token *jwt.Token) (interface{}, error) {
 		return secret, nil
 	})
 
 	if errors.Is(err, jwt.ErrInvalidKey) {
-		return ErrInvalidKey
+		return nil, ErrInvalidKey
 	}
 
-	return err
+	return t.Claims, err
 }
 
 func (dt *DefaultToken[T, F]) Store() Store[T] {

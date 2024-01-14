@@ -19,7 +19,7 @@ func InitApiServer() *gin.Engine {
 		ioc.InitLogDriver,
 		ioc.InitLogger,
 		// init rcache
-		ioc.NewRedisClient,
+		//ioc.NewRedisClient,
 		// init orm
 		ioc.InitORM,
 		// init token

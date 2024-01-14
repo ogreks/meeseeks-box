@@ -53,6 +53,7 @@ func (s *service) CreatePlatformAccount(ctx context.Context, account AccountPlat
 	waitDeleteAt := time.Now().AddDate(0, 0, 30)
 	t := time.Now()
 
+	userName := utils.CreateUserName()
 	return s.domain.CreatePlatformAccount(
 		ctx,
 		model.Account{
@@ -60,7 +61,7 @@ func (s *service) CreatePlatformAccount(ctx context.Context, account AccountPlat
 			Type:         3,
 			CountryCode:  &countryCode,
 			Email:        account.Email,
-			UserName:     utils.CreateUserName(),
+			UserName:     userName,
 			WaitDelete:   1,
 			WaitDeleteAt: &waitDeleteAt,
 			LastLoginAt:  &t,
@@ -76,7 +77,7 @@ func (s *service) CreatePlatformAccount(ctx context.Context, account AccountPlat
 			RefreshTokenExpireAt: account.RefreshTokenExpireAt,
 		},
 		model.User{
-			UserName:       account.UserName,
+			UserName:       userName,
 			NickName:       account.NickName,
 			LastActivityAt: &t,
 			WaitDelete:     1,
@@ -117,6 +118,59 @@ func (s *service) LoginUserByGITHub(ctx context.Context, account AccountPlatform
 	}
 
 	return &UserAccount{
-		Aid: ac.Aid,
+		Aid:         ac.Aid,
+		LastLoginAt: *ac.LastLoginAt,
+	}, nil
+}
+
+type User struct {
+	AccountID string `json:"account_id"`
+	Email     string `json:"email"`
+
+	CountryCode string `json:"country_code"`
+	PurePhone   string `json:"pure_phone"`
+	Phone       string `json:"phone"`
+
+	UserName string `json:"user_name"`
+
+	RegisterTime time.Time `json:"register_time"`
+
+	NickName string `json:"nick_name"`
+	Gender   uint32 `json:"gender"`
+	Bio      string `json:"bio"`
+}
+
+// GetUserByAccountAid get user info by account aid
+func (s *service) GetUserByAccountAid(ctx context.Context, aid string) (*User, error) {
+	account, err := s.domain.FindAccount(ctx, model.Account{Aid: aid})
+	if err != nil {
+		if errors.Is(err, udomain.AccountNotFound) {
+			return nil, ErrorAccountNotFound
+		}
+		return nil, err
+	}
+
+	user, err := s.domain.FindUser(ctx, model.User{
+		AccountID: account.ID,
+	})
+	if err != nil {
+		if errors.Is(err, udomain.UserNotFound) {
+			return nil, ErrorUserNotFound
+		}
+		return nil, err
+	}
+
+	return &User{
+		AccountID:    account.Aid,
+		Email:        account.Email,
+		CountryCode:  *account.CountryCode,
+		PurePhone:    account.PurePhone,
+		Phone:        account.Phone,
+		UserName:     account.UserName,
+		RegisterTime: *account.CreatedAt,
+
+		NickName: user.NickName,
+		Gender:   *user.Gender,
+		Bio:      user.Bio,
 	}, nil
 }

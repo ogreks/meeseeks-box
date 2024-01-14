@@ -25,8 +25,8 @@ type Account struct {
 	IsEnabled    *uint32    `gorm:"column:is_enabled;type:tinyint unsigned;not null;default:1;comment:是否启用0.禁用/1.正常" json:"is_enabled"`        // 是否启用0.禁用/1.正常
 	WaitDelete   uint32     `gorm:"column:wait_delete;type:tinyint unsigned;not null;comment:等待删除0.否/1.是/2.永久" json:"wait_delete"`             // 等待删除0.否/1.是/2.永久
 	WaitDeleteAt *time.Time `gorm:"column:wait_delete_at;type:timestamp;comment:等待删除时间" json:"wait_delete_at"`                                 // 等待删除时间
-	CreatedAt    time.Time  `gorm:"column:created_at;type:timestamp;not null;comment:创建时间" json:"created_at"`                                  // 创建时间
-	UpdatedAt    time.Time  `gorm:"column:updated_at;type:timestamp;not null;comment:更新时间" json:"updated_at"`                                  // 更新时间
+	CreatedAt    *time.Time `gorm:"column:created_at;type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"created_at"`        // 创建时间
+	UpdatedAt    *time.Time `gorm:"column:updated_at;type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"updated_at"`        // 更新时间
 	DeletedAt    *time.Time `gorm:"column:deleted_at;type:timestamp;comment:删除时间" json:"deleted_at"`                                           // 删除时间
 }
 
