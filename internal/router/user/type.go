@@ -1,6 +1,8 @@
 package user
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 	"github.com/ogreks/meeseeks-box/configs"
@@ -8,7 +10,6 @@ import (
 	"github.com/ogreks/meeseeks-box/internal/pkg/token"
 	"github.com/ogreks/meeseeks-box/internal/repository/orm"
 	"go.uber.org/zap"
-	"time"
 )
 
 func Register(r *gin.Engine, db orm.Repo, logger *zap.Logger, tokenStore token.Store[string]) {

@@ -37,23 +37,30 @@ func Test_DefaultCreateToken(t *testing.T) {
 		{
 			name:    "create token",
 			token:   "123123121",
-			wantVal: "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJjb250ZW50IjpudWxsfQ.hUOIv_i_PmoIJ4zI6qUzPkp5HzJa5yEEQl8WT28NMn45x6yHEFEQH5S5IWA37KMF8pQbqiyuAbH76MtcUcECbw",
+			wantVal: "123123121",
 		},
 	}
 
 	for _, tc := range testCase {
 		t.Run(tc.name, func(t *testing.T) {
-			tk := NewDefaultToken[string, func() (jwt.SigningMethod, []byte, jwt.Claims)](
-				WithStore[string, func() (jwt.SigningMethod, []byte, jwt.Claims)](store),
-				WithExpire[string, func() (jwt.SigningMethod, []byte, jwt.Claims)](100),
-				WithFun[string, func() (jwt.SigningMethod, []byte, jwt.Claims)](func() (jwt.SigningMethod, []byte, jwt.Claims) {
-					return jwt.SigningMethodHS512, []byte("1231231231"), &JWTClaim{}
+			tk := NewDefaultToken[string, func() (jwt.SigningMethod, []byte)](
+				WithStore[string, func() (jwt.SigningMethod, []byte)](store),
+				WithExpire[string, func() (jwt.SigningMethod, []byte)](100*time.Second),
+				WithFun[string, func() (jwt.SigningMethod, []byte)](func() (jwt.SigningMethod, []byte) {
+					return jwt.SigningMethodHS512, []byte("1231231231")
 				}),
+				WithClaims[string, func() (jwt.SigningMethod, []byte)](&JWTClaim{}),
 			)
 
-			val, err := tk.CreateToken(context.TODO())
-			assert.Equal(t, val, tc.wantVal)
+			tks, err := tk.CreateToken(context.TODO(), &JWTClaim{
+				Content: tc.token,
+			})
+			assert.NoError(t, err)
+
+			claims, err := tk.Validate(tks)
 			assert.Equal(t, err, tc.wantErr)
+
+			assert.Equal(t, claims.(*JWTClaim).Content.(string), tc.wantVal)
 		})
 	}
 
