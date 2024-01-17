@@ -38,8 +38,8 @@ func (h *handler) LoginGITHub(ctx *gin.Context) {
 		ExpireAt     int    `json:"expire_at" binding:"required"`
 
 		ID       int    `json:"id" binding:"required"`
-		NickName string `json:"nickname" binding:"required"`
-		Name     string `json:"name" binding:"required"`
+		NickName string `json:"nickname"`
+		Name     string `json:"name"`
 		Email    string `json:"email"`
 		Options  string `json:"options" binding:"required"`
 	}

@@ -45,31 +45,49 @@ func (ds *DefaultStore[T]) write() error {
 		ds.lock.Unlock()
 	}()
 
-	var m = make(map[T]time.Time)
+	var (
+		m      = make(map[T]time.Time)
+		delVal []T
+	)
+
 	ds.container.Range(func(key, value any) bool {
+		tv := value.(time.Time)
+		if tv.Before(time.Now()) || tv.Equal(time.Now()) {
+			delVal = append(delVal, key.(T))
+			return true
+		}
 		m[key.(T)] = value.(time.Time)
 		return true
 	})
 
-	data, err := json.Marshal(&m)
+	// delete timeout key
+	for _, v := range delVal {
+		ds.container.Delete(v)
+	}
+
+	_ = ds.file.Truncate(0)
+	if len(m) == 0 {
+		return nil
+	}
+
+	data, err := json.MarshalIndent(&m, "", "    ")
 	if err != nil {
 		return err
 	}
 
-	var b = bufio.NewWriter(ds.file)
-	defer b.Flush()
-	_, err = b.Write(data)
+	bf := bufio.NewWriter(ds.file)
+	_, err = bf.Write(data)
 	if err != nil {
 		return err
 	}
 
-	return nil
+	return bf.Flush()
 }
 
 func (ds *DefaultStore[T]) sync() error {
 	for {
 		select {
-		case <-time.After(5 * time.Second):
+		case <-time.After(60 * time.Second):
 			err := ds.write()
 			if err != nil {
 				ds.logger.Error("write file error", zap.Error(err))
@@ -116,6 +134,9 @@ func (ds *DefaultStore[T]) loadSyncMap() {
 	}
 
 	for k, v := range m {
+		if v.Before(time.Now()) {
+			continue
+		}
 		ds.container.Store(k, v)
 	}
 }
@@ -132,7 +153,7 @@ func (ds *DefaultStore[T]) init() {
 	err := <-ds.complete
 	close(ds.complete)
 	_ = ds.shutdown(context.Background())
-	if err != nil {
+	if err != nil && !errors.Is(err, errors.New("interrupt closed")) {
 		if !errors.Is(err, errors.New("interrupt closed")) {
 			ds.logger.Error("sync error", zap.Error(err))
 		}
