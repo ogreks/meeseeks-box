@@ -31,3 +31,8 @@ fmt:
 .PHONY: api-wire
 api-wire:
 	cd $(shell pwd)/internal/bootstrap && wire
+
+## local-run: develop local runner...
+.PHONY: local-run
+local-run:
+	go run main.go server start

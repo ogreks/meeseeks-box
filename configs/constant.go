@@ -5,5 +5,7 @@ const (
 
 	RequestHeaderJWTKey = "Authorization"
 
+	RequestHeaderRefershKey = "Authenticate"
+
 	RequestHeaderJWTExpireTime = 60 * 60 * 2
 )

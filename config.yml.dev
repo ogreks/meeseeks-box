@@ -11,8 +11,11 @@ server:
 
 # config.JWT
 jwt:
-  secret: meeseeks
-  Expire: 3600
+  secret: meeseeks # jwt secret
+  expire: 3600 # jwt token expire time
+  issuer: meeseeks-box
+  header_key: # header jwt authorize key
+  refers_key: # header jwt refers token authorize key
 
 # configs.Database
 database:
@@ -27,14 +30,14 @@ database:
 
 # config.RCache
 rcache:
-  driver: localhost:6379
+  driver: ./var/cache/d/db.token.json # redis address (localhost:6379) or local file path Demo: ./var/cache/d/db.token.json
   password: meeseeks
 
 # configs.Webhook
 webhook:
   feishu:
-    app_id:
-    secret:
+    app_id: # application id
+    secret: # application secret
     encrypt_key:  # 可选
     verification_token:  # 可选
 

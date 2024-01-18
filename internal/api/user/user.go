@@ -4,9 +4,10 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	ujwt "github.com/ogreks/meeseeks-box/internal/pkg/middleware/auth"
 	"net/http"
 	"time"
+
+	ujwt "github.com/ogreks/meeseeks-box/internal/pkg/middleware/auth"
 
 	"github.com/gin-gonic/gin"
 	"github.com/ogreks/meeseeks-box/configs"
@@ -24,15 +25,7 @@ const (
 )
 
 // Login user login
-// @Summary user login
-// @Description user api login
-// @Tags API.user
-// @Accept application/json
-// @Produce json
-// @Param username Body json true "username/email/phone ..."
-// @Param password Body json true "md5 for password"
-// @Router /api/user/login [post]
-// @Security Login
+// Router /api/user/login [post]
 func (h *handler) Login(ctx *gin.Context) {
 	type login struct {
 		Type     int    `json:"type" binding:"required"`
@@ -152,16 +145,7 @@ func (h *handler) Login(ctx *gin.Context) {
 }
 
 // Register user register
-// @Summary user register
-// @Description user api register
-// @Tags API.user
-// @Accept application/json
-// @Produce json
-// @Param username Body json true "username/email/phone ..."
-// @Param password Body json true "md5 for password"
-// @Param register_type Body json true "register type 1: username 2: email 3: phone"
 // @Router /api/user/register [post]
-// @Security Register
 func (h *handler) Register(ctx *gin.Context) {
 	type register struct {
 		Username     string `json:"username" binding:"required"`
@@ -251,6 +235,8 @@ func (h *handler) Register(ctx *gin.Context) {
 	})
 }
 
+// Me user get profile
+// @Router /api/user/me [get]
 func (h *handler) Me(ctx *gin.Context) {
 	claims, ok := ctx.Get("claims")
 	if !ok {
@@ -297,4 +283,10 @@ func (h *handler) Me(ctx *gin.Context) {
 		"message": "success",
 		"data":    user,
 	})
+}
+
+// RefersToken user refers token timeout
+// @Router /api/user/refers/token [put]
+func (h *handler) RefersToken(ctx *gin.Context) {
+	ctx.GetHeader(configs.GetConfig().Jwt.RefersKey)
 }

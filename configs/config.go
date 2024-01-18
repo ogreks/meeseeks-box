@@ -24,7 +24,7 @@ type Config struct {
 	} `mapstructure:"webhook"`
 }
 
-// init config default value
+// NewConfig init config default value
 func NewConfig() *Config {
 	return &Config{
 		watch: make(chan Config, 1),
@@ -63,6 +63,10 @@ func initDefaultConfig() {
 
 	if cfg.Jwt.HeaderKey == "" {
 		cfg.Jwt.HeaderKey = RequestHeaderJWTKey
+	}
+
+	if cfg.Jwt.RefersKey == "" {
+		cfg.Jwt.RefersKey = RequestHeaderRefershKey
 	}
 
 	if cfg.Jwt.Expire == 0 {

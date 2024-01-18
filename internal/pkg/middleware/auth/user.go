@@ -46,8 +46,10 @@ func (uj *UserJwtMiddleware) Builder() gin.HandlerFunc {
 		// parse token
 		c, err := uj.Token.Validate(tk)
 		if err != nil {
-			_ = ctx.AbortWithError(http.StatusUnauthorized, err)
-			return
+			if !errors.Is(err, token.ErrTokenNotFound) {
+				_ = ctx.AbortWithError(http.StatusUnauthorized, err)
+				return
+			}
 		}
 
 		// set claims to context
