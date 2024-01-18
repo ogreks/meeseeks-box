@@ -23,7 +23,13 @@ func Register(r *gin.Engine, db orm.Repo, logger *zap.Logger, tokenStore token.S
 		token.WithClaims(&userJwt.UserClaims{}),
 	)
 
-	j := userJwt.NewUserJwtMiddleware(configs.GetConfig().Jwt.HeaderKey, tk)
+	// init jwt middleware
+	j := userJwt.NewUserJwtMiddleware(
+		configs.GetConfig().Jwt.HeaderKey,
+		configs.GetConfig().Jwt.RefersKey,
+		time.Duration(configs.GetConfig().Jwt.RefreshTimeout)*time.Second,
+		tk,
+	)
 
 	ur := NewUserRouter(db, logger, j, tk)
 	ur.Register(r)

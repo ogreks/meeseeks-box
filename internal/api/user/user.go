@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"github.com/golang-jwt/jwt"
 	"net/http"
 	"time"
 
@@ -288,5 +289,82 @@ func (h *handler) Me(ctx *gin.Context) {
 // RefersToken user refers token timeout
 // @Router /api/user/refers/token [put]
 func (h *handler) RefersToken(ctx *gin.Context) {
-	ctx.GetHeader(configs.GetConfig().Jwt.RefersKey)
+	claims, ok := ctx.Get("claims")
+	if !ok {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"code":    400,
+			"message": "bad request",
+			"data":    gin.H{},
+		})
+		return
+	}
+
+	c, ok := claims.(*ujwt.UserClaims)
+	if !ok {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"code":    400,
+			"message": "bad request",
+			"data":    gin.H{},
+		})
+		return
+	}
+
+	var (
+		tk, rest string
+		err      error
+	)
+
+	if otk := ctx.GetHeader(configs.GetConfig().Jwt.HeaderKey); otk != "" {
+		tk, err = h.tokenManager.RefreshToken(ctx.Request.Context(), otk, &ujwt.UserClaims{
+			StandardClaims: jwt.StandardClaims{
+				Issuer:    configs.GetConfig().Jwt.Issuer,
+				ExpiresAt: time.Now().Add(time.Duration(configs.GetConfig().Jwt.Expire) * time.Second).Unix(),
+			},
+			Content: c.Content,
+		}, time.Duration(configs.GetConfig().Jwt.Expire)*time.Second+20)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"code":    http.StatusBadRequest,
+				"message": "bad request",
+				"data":    err.Error(),
+			})
+			return
+		}
+	}
+
+	if orset := ctx.GetHeader(configs.GetConfig().Jwt.HeaderKey); orset != "" {
+		rest, err = h.tokenManager.RefreshToken(ctx.Request.Context(), orset, &ujwt.UserClaims{
+			StandardClaims: jwt.StandardClaims{
+				Audience:  "refresh",
+				Issuer:    configs.GetConfig().Jwt.Issuer,
+				ExpiresAt: time.Now().Add(time.Duration(configs.GetConfig().Jwt.Expire) * time.Second * 10).Unix(),
+			},
+			Content: c.Content,
+		}, time.Duration(configs.GetConfig().Jwt.Expire)*time.Second*10+20)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"code":    http.StatusBadRequest,
+				"message": "bad request refresh",
+				"data":    err.Error(),
+			})
+			return
+		}
+	}
+
+	ctx.Request.Header.Set(configs.GetConfig().Jwt.HeaderKey, fmt.Sprintf("Bearer %s", tk))
+	ctx.Header(configs.GetConfig().Jwt.HeaderKey, fmt.Sprintf("Bearer %s", tk))
+	ctx.Request.Header.Set(configs.GetConfig().Jwt.RefersKey, rest)
+	ctx.Header(configs.GetConfig().Jwt.RefersKey, rest)
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"code":    http.StatusOK,
+		"message": "success",
+		"data": gin.H{
+			"access_id":            c.Content,
+			"token":                tk,
+			"expire":               configs.GetConfig().Jwt.Expire - 5,
+			"refresh_token":        rest,
+			"refresh_token_expire": (time.Duration(configs.GetConfig().Jwt.Expire) * 10) - 5,
+		},
+	})
 }

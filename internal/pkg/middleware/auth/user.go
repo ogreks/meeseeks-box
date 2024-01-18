@@ -7,6 +7,7 @@ import (
 	"github.com/ogreks/meeseeks-box/internal/pkg/token"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type UserClaims struct {
@@ -16,17 +17,41 @@ type UserClaims struct {
 }
 
 type UserJwtMiddleware struct {
-	HeaderKey string
-	Token     token.Token[string, func() (jwt.SigningMethod, []byte, jwt.Claims)]
+	HeaderKey      string
+	RefreshKey     string
+	RefreshTimeout time.Duration
+	Token          token.Token[string, func() (jwt.SigningMethod, []byte, jwt.Claims)]
 }
 
-func NewUserJwtMiddleware(headerKey string, tk token.Token[string, func() (jwt.SigningMethod, []byte, jwt.Claims)]) *UserJwtMiddleware {
+func NewUserJwtMiddleware(
+	headerKey, RefreshKey string,
+	refreshTimeout time.Duration,
+	tk token.Token[string, func() (jwt.SigningMethod, []byte, jwt.Claims)]
+) *UserJwtMiddleware {
 	return &UserJwtMiddleware{
 		HeaderKey: headerKey,
+		RefreshKey: RefreshKey,
+		RefreshTimeout: refreshTimeout,
 		Token:     tk,
 	}
 }
 
+// RefreshToken inner refresh token
+func (uj *UserJwtMiddleware) RefreshToken(ctx *gin.Context, claim *UserClaims) {
+	if time.Now().Sub(time.Unix(claim.ExpiresAt, 0)) > uj.RefreshTimeout {
+		return
+	}
+
+	// refresh token
+	rft := ctx.Request.Header.Get(uj.RefreshKey)
+	if rft == "" {
+		return
+	}
+
+	// TODO refresh token set header
+}
+
+// Builder middleware
 func (uj *UserJwtMiddleware) Builder() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// get token from header
@@ -46,11 +71,12 @@ func (uj *UserJwtMiddleware) Builder() gin.HandlerFunc {
 		// parse token
 		c, err := uj.Token.Validate(tk)
 		if err != nil {
-			if !errors.Is(err, token.ErrTokenNotFound) {
-				_ = ctx.AbortWithError(http.StatusUnauthorized, err)
-				return
-			}
+			_ = ctx.AbortWithError(http.StatusUnauthorized, err)
+			return
 		}
+
+		// true
+		uj.RefreshToken(ctx, c.(*UserClaims))
 
 		// set claims to context
 		ctx.Set("claims", c)

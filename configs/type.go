@@ -61,11 +61,12 @@ type Server struct {
 }
 
 type Jwt struct {
-	Secret    string `mapstructure:"secret"`
-	Expire    int    `mapstructure:"expire"`
-	Issuer    string `mapstructure:"issuer"`
-	HeaderKey string `mapstructure:"header_key"`
-	RefersKey string `mapstructure:"refers_key"`
+	Secret         string `mapstructure:"secret"`
+	Expire         int64  `mapstructure:"expire"`
+	RefreshTimeout int64  `mapstructure:"refresh_timeout"`
+	Issuer         string `mapstructure:"issuer"`
+	HeaderKey      string `mapstructure:"header_key"`
+	RefersKey      string `mapstructure:"refers_key"`
 }
 
 type Feishu struct {

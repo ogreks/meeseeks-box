@@ -15,22 +15,7 @@ import (
 )
 
 // LoginGITHub user login GitHub
-// @Summary user login
-// @Description GitHub account api login
-// @Tags API.user
-// @Accept application/json
-// @Produce json
-// @Param connect_account_id Body json true "account id"
-// @Param token Body json true "GitHub token"
-// @Param refresh_token Body json true "GitHub refresh token"
-// @Param expire_at Body json true "GitHub token expire time"
-// @Param id Body json true "GitHub id"
-// @Param nickname Body json true "GitHub nickname"
-// @Param name Body json true "GitHub name"
-// @Param email Body json true "GitHub bind email"
-// @Param options Body json true "GitHub account more json"
-// @Router /api/user/github/login [post]
-// @Security Login
+// Router /api/user/github/login [post]
 func (h *handler) LoginGITHub(ctx *gin.Context) {
 	type githubReq struct {
 		Token        string `json:"token" binding:"required"`
@@ -85,7 +70,7 @@ func (h *handler) LoginGITHub(ctx *gin.Context) {
 			ExpiresAt: time.Now().Add(time.Duration(configs.GetConfig().Jwt.Expire) * time.Second).Unix(),
 		},
 		Content: ac.Aid,
-	})
+	}, time.Duration(configs.GetConfig().Jwt.Expire)*time.Second+20)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"code":    500,
@@ -96,15 +81,37 @@ func (h *handler) LoginGITHub(ctx *gin.Context) {
 	}
 
 	ctx.Request.Header.Set(configs.GetConfig().Jwt.HeaderKey, fmt.Sprintf("Bearer %s", tk))
-	ctx.Header("Authorization", fmt.Sprintf("Bearer %s", tk))
+	ctx.Header(configs.GetConfig().Jwt.HeaderKey, fmt.Sprintf("Bearer %s", tk))
+
+	rest, err := h.tokenManager.CreateToken(ctx.Request.Context(), &userJwt.UserClaims{
+		StandardClaims: jwt.StandardClaims{
+			Audience:  "refresh",
+			Issuer:    configs.GetConfig().Jwt.Issuer,
+			ExpiresAt: time.Now().Add(time.Duration(configs.GetConfig().Jwt.Expire) * time.Second * 10).Unix(),
+		},
+		Content: ac.Aid,
+	}, time.Duration(configs.GetConfig().Jwt.Expire)*time.Second*10+20)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"code":    500,
+			"message": "server error not",
+			"data":    err.Error(),
+		})
+		return
+	}
+
+	ctx.Request.Header.Set(configs.GetConfig().Jwt.RefersKey, rest)
+	ctx.Header(configs.GetConfig().Jwt.RefersKey, rest)
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"code":    200,
 		"message": "success",
 		"data": gin.H{
-			"access_id": ac.Aid,
-			"token":     tk,
-			"expire":    configs.GetConfig().Jwt.Expire - 5,
+			"access_id":            ac.Aid,
+			"token":                tk,
+			"expire":               configs.GetConfig().Jwt.Expire - 5,
+			"refresh_token":        rest,
+			"refresh_token_expire": (time.Duration(configs.GetConfig().Jwt.Expire) * 10) - 5,
 		},
 	})
 }

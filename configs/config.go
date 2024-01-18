@@ -72,6 +72,10 @@ func initDefaultConfig() {
 	if cfg.Jwt.Expire == 0 {
 		cfg.Jwt.Expire = RequestHeaderJWTExpireTime
 	}
+
+	if cfg.Jwt.RefreshTimeout == 0 {
+		cfg.Jwt.RefreshTimeout = RequestHeaderJWTExpireTime * 10
+	}
 }
 
 func InitConfig(configFile string) *Config {
