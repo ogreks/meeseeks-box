@@ -23,6 +23,7 @@ go.work
 
 # conf
 /var/cache/*.conf
+/var/cache/*.json
 /var/cache/d/
 /var/db/
 
