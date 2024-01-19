@@ -39,6 +39,7 @@ func (uRoute *UserRouter) Register(r *gin.Engine) *UserRouter {
 		mUserRouter := userRouter.Group("/", uRoute.jwtMiddleware.Builder())
 		{
 			mUserRouter.GET("/me", uRoute.userHandle.Me)
+			mUserRouter.PUT("/refresh/token", uRoute.userHandle.RefersToken)
 		}
 	}
 	return uRoute

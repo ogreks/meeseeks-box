@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/golang-jwt/jwt"
 	"net/http"
+	"strings"
 	"time"
 
 	ujwt "github.com/ogreks/meeseeks-box/internal/pkg/middleware/auth"
@@ -315,32 +316,38 @@ func (h *handler) RefersToken(ctx *gin.Context) {
 	)
 
 	if otk := ctx.GetHeader(configs.GetConfig().Jwt.HeaderKey); otk != "" {
-		tk, err = h.tokenManager.RefreshToken(ctx.Request.Context(), otk, &ujwt.UserClaims{
-			StandardClaims: jwt.StandardClaims{
-				Issuer:    configs.GetConfig().Jwt.Issuer,
-				ExpiresAt: time.Now().Add(time.Duration(configs.GetConfig().Jwt.Expire) * time.Second).Unix(),
-			},
-			Content: c.Content,
-		}, time.Duration(configs.GetConfig().Jwt.Expire)*time.Second+20)
-		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"code":    http.StatusBadRequest,
-				"message": "bad request",
-				"data":    err.Error(),
-			})
-			return
+		segs := strings.Split(otk, " ")
+		if len(segs) == 2 {
+			tk, err = h.tokenManager.RefreshToken(ctx.Request.Context(), segs[1], &ujwt.UserClaims{
+				StandardClaims: jwt.StandardClaims{
+					Subject:   c.Content.(string),
+					Audience:  "api",
+					Issuer:    configs.GetConfig().Jwt.Issuer,
+					ExpiresAt: time.Now().Add(time.Duration(configs.GetConfig().Jwt.Expire) * time.Second).Unix(),
+				},
+				Content: c.Content,
+			}, time.Duration(configs.GetConfig().Jwt.Expire)*time.Second+20)
+			if err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{
+					"code":    http.StatusBadRequest,
+					"message": "bad request",
+					"data":    err.Error(),
+				})
+				return
+			}
 		}
 	}
 
 	if orset := ctx.GetHeader(configs.GetConfig().Jwt.HeaderKey); orset != "" {
 		rest, err = h.tokenManager.RefreshToken(ctx.Request.Context(), orset, &ujwt.UserClaims{
 			StandardClaims: jwt.StandardClaims{
+				Subject:   c.Content.(string),
 				Audience:  "refresh",
 				Issuer:    configs.GetConfig().Jwt.Issuer,
 				ExpiresAt: time.Now().Add(time.Duration(configs.GetConfig().Jwt.Expire) * time.Second * 10).Unix(),
 			},
 			Content: c.Content,
-		}, time.Duration(configs.GetConfig().Jwt.Expire)*time.Second*10+20)
+		}, time.Duration(configs.GetConfig().Jwt.RefreshTimeout)*time.Second+20)
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{
 				"code":    http.StatusBadRequest,

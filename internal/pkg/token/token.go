@@ -131,7 +131,7 @@ func (dt *DefaultToken[T, F]) Validate(token T) (jwt.Claims, error) {
 		if errors.As(err, &jvl) {
 			switch jvl.Errors {
 			case jwt.ValidationErrorExpired:
-				return nil, ErrTokenTimeout
+				return t.Claims, ErrTokenTimeout
 			default:
 				return nil, err
 			}

@@ -27,7 +27,8 @@ func Register(r *gin.Engine, db orm.Repo, logger *zap.Logger, tokenStore token.S
 	j := userJwt.NewUserJwtMiddleware(
 		configs.GetConfig().Jwt.HeaderKey,
 		configs.GetConfig().Jwt.RefersKey,
-		time.Duration(configs.GetConfig().Jwt.RefreshTimeout)*time.Second,
+		time.Duration(configs.GetConfig().Jwt.Expire),
+		time.Duration(configs.GetConfig().Jwt.RefreshTimeout),
 		tk,
 	)
 

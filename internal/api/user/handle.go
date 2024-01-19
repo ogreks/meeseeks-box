@@ -15,24 +15,24 @@ type Handler interface {
 	i()
 
 	// Login user login
-	// @Tags API.User
-	// @Router /api/user/login [post]
+	// Router /api/user/login [post]
 	Login(*gin.Context)
 
 	// LoginGITHub login by github account
-	// @Tags API.User
-	// @Router /api/user/github/login [post]
+	// Router /api/user/github/login [post]
 	LoginGITHub(ctx *gin.Context)
 
 	// Register user register
-	// @Tags API.User
-	// @Router /api/user/register [post]
+	// Router /api/user/register [post]
 	Register(*gin.Context)
 
 	// Me user info
-	// @Tags API.User
-	// @Router /api/user/me [get]
+	// Router /api/user/me [get]
 	Me(*gin.Context)
+
+	// RefersToken refers token
+	// Router /api/user/refersh/token [put]
+	RefersToken(ctx *gin.Context)
 }
 
 type handler struct {

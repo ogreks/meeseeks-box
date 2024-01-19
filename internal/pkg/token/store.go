@@ -2,12 +2,14 @@ package token
 
 import (
 	"bufio"
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
 	"io"
 	"os"
 	"os/signal"
+	"regexp"
 	"sync"
 	"time"
 
@@ -76,7 +78,7 @@ func (ds *DefaultStore[T]) write() error {
 	}
 
 	bf := bufio.NewWriter(ds.file)
-	_, err = bf.Write(data)
+	_, err = bf.Write(bytes.TrimSpace(data))
 	if err != nil {
 		return err
 	}
@@ -85,9 +87,11 @@ func (ds *DefaultStore[T]) write() error {
 }
 
 func (ds *DefaultStore[T]) sync() error {
+	t := time.NewTimer(60 * time.Second)
+	defer t.Stop()
 	for {
 		select {
-		case <-time.After(60 * time.Second):
+		case <-t.C:
 			err := ds.write()
 			if err != nil {
 				ds.logger.Error("write file error", zap.Error(err))
@@ -119,6 +123,11 @@ func (ds *DefaultStore[T]) loadSyncMap() {
 			return
 		}
 
+		tmb := bytes.TrimSpace(buffer[:readLength])
+		if len(tmb) == 0 {
+			continue
+		}
+
 		ret = append(ret, buffer[:readLength]...)
 	}
 
@@ -126,9 +135,13 @@ func (ds *DefaultStore[T]) loadSyncMap() {
 		return
 	}
 
+	invalidCharRegex := regexp.MustCompile("[\x00-\x1F]")
+	ret = invalidCharRegex.ReplaceAll(ret, []byte{})
+
 	var m = make(map[T]time.Time)
 	err := json.Unmarshal(ret, &m)
 	if err != nil {
+		panic(err)
 		ds.logger.Panic("unmarshal error", zap.Error(err))
 		return
 	}
@@ -139,6 +152,10 @@ func (ds *DefaultStore[T]) loadSyncMap() {
 		}
 		ds.container.Store(k, v)
 	}
+
+	ds.container.Range(func(key, value any) bool {
+		return true
+	})
 }
 
 func (ds *DefaultStore[T]) init() {
@@ -185,7 +202,7 @@ func (ds *DefaultStore[T]) shutdown(ctx context.Context) (err error) {
 }
 
 func NewDefaultStore[T Type](file string, logger *zap.Logger) (Store[T], error) {
-	f, err := os.OpenFile(file, os.O_CREATE|os.O_RDWR|os.O_SYNC|os.O_TRUNC, 0666)
+	f, err := os.OpenFile(file, os.O_CREATE|os.O_RDWR|os.O_SYNC, 0666)
 	if err != nil {
 		return nil, err
 	}

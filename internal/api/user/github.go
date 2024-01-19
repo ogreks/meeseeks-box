@@ -66,11 +66,13 @@ func (h *handler) LoginGITHub(ctx *gin.Context) {
 
 	tk, err := h.tokenManager.CreateToken(ctx.Request.Context(), &userJwt.UserClaims{
 		StandardClaims: jwt.StandardClaims{
+			Subject:   ac.Aid,
+			Audience:  "api",
 			Issuer:    configs.GetConfig().Jwt.Issuer,
 			ExpiresAt: time.Now().Add(time.Duration(configs.GetConfig().Jwt.Expire) * time.Second).Unix(),
 		},
 		Content: ac.Aid,
-	}, time.Duration(configs.GetConfig().Jwt.Expire)*time.Second+20)
+	}, time.Duration(configs.GetConfig().Jwt.Expire+20)*time.Minute)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"code":    500,
@@ -85,12 +87,13 @@ func (h *handler) LoginGITHub(ctx *gin.Context) {
 
 	rest, err := h.tokenManager.CreateToken(ctx.Request.Context(), &userJwt.UserClaims{
 		StandardClaims: jwt.StandardClaims{
+			Subject:   ac.Aid,
 			Audience:  "refresh",
 			Issuer:    configs.GetConfig().Jwt.Issuer,
-			ExpiresAt: time.Now().Add(time.Duration(configs.GetConfig().Jwt.Expire) * time.Second * 10).Unix(),
+			ExpiresAt: time.Now().Add(time.Duration(configs.GetConfig().Jwt.RefreshTimeout) * time.Second).Unix(),
 		},
 		Content: ac.Aid,
-	}, time.Duration(configs.GetConfig().Jwt.Expire)*time.Second*10+20)
+	}, time.Duration(configs.GetConfig().Jwt.RefreshTimeout+20)*time.Second)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"code":    500,

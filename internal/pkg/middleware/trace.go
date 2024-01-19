@@ -34,7 +34,10 @@ func TraceWithConfig(config TraceConfig) gin.HandlerFunc {
 		traceID := c.GetHeader(config.RequestHeaderKey)
 		if traceID == "" {
 			buf := make([]byte, 16)
-			io.ReadFull(rand.Reader, buf)
+			_, err := io.ReadFull(rand.Reader, buf)
+			if err != nil {
+				return
+			}
 			traceID = fmt.Sprintf("%x", buf)
 		}
 
