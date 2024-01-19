@@ -11,8 +11,8 @@ import (
 )
 
 var (
-	ErrorAccountParamsNotFound  = errors.New("Missing authentication account parameters")
-	ErrorAccountConnectNotFound = errors.New("The authenticated user does not exist")
+	ErrorAccountParamsNotFound  = errors.New("missing authentication account parameters")
+	ErrorAccountConnectNotFound = errors.New("the authenticated user does not exist")
 )
 
 type AccountPlatform struct {
