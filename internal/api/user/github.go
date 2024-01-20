@@ -72,7 +72,7 @@ func (h *handler) LoginGITHub(ctx *gin.Context) {
 			ExpiresAt: time.Now().Add(time.Duration(configs.GetConfig().Jwt.Expire) * time.Second).Unix(),
 		},
 		Content: ac.Aid,
-	}, time.Duration(configs.GetConfig().Jwt.Expire+20)*time.Minute)
+	}, time.Duration(configs.GetConfig().Jwt.Expire)*time.Second+(20*time.Second))
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"code":    500,
@@ -93,7 +93,7 @@ func (h *handler) LoginGITHub(ctx *gin.Context) {
 			ExpiresAt: time.Now().Add(time.Duration(configs.GetConfig().Jwt.RefreshTimeout) * time.Second).Unix(),
 		},
 		Content: ac.Aid,
-	}, time.Duration(configs.GetConfig().Jwt.RefreshTimeout+20)*time.Second)
+	}, time.Duration(configs.GetConfig().Jwt.RefreshTimeout)*time.Second+(20*time.Second))
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"code":    500,

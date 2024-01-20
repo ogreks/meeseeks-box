@@ -288,7 +288,7 @@ func (h *handler) Me(ctx *gin.Context) {
 }
 
 // RefersToken user refers token timeout
-// @Router /api/user/refers/token [put]
+// Router /api/user/refers/token [put]
 func (h *handler) RefersToken(ctx *gin.Context) {
 	claims, ok := ctx.Get("claims")
 	if !ok {
@@ -326,7 +326,7 @@ func (h *handler) RefersToken(ctx *gin.Context) {
 					ExpiresAt: time.Now().Add(time.Duration(configs.GetConfig().Jwt.Expire) * time.Second).Unix(),
 				},
 				Content: c.Content,
-			}, time.Duration(configs.GetConfig().Jwt.Expire)*time.Second+20)
+			}, time.Duration(configs.GetConfig().Jwt.Expire)*time.Second+(20*time.Second))
 			if err != nil {
 				ctx.JSON(http.StatusBadRequest, gin.H{
 					"code":    http.StatusBadRequest,
@@ -344,10 +344,10 @@ func (h *handler) RefersToken(ctx *gin.Context) {
 				Subject:   c.Content.(string),
 				Audience:  "refresh",
 				Issuer:    configs.GetConfig().Jwt.Issuer,
-				ExpiresAt: time.Now().Add(time.Duration(configs.GetConfig().Jwt.Expire) * time.Second * 10).Unix(),
+				ExpiresAt: time.Now().Add(time.Duration(configs.GetConfig().Jwt.RefreshTimeout) * time.Second).Unix(),
 			},
 			Content: c.Content,
-		}, time.Duration(configs.GetConfig().Jwt.RefreshTimeout)*time.Second+20)
+		}, time.Duration(configs.GetConfig().Jwt.RefreshTimeout)*time.Second+(20*time.Second))
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{
 				"code":    http.StatusBadRequest,
@@ -373,5 +373,27 @@ func (h *handler) RefersToken(ctx *gin.Context) {
 			"refresh_token":        rest,
 			"refresh_token_expire": (time.Duration(configs.GetConfig().Jwt.Expire) * 10) - 5,
 		},
+	})
+}
+
+// Logout logout user token
+// Router /api/user/logout [delete]
+func (h *handler) Logout(ctx *gin.Context) {
+	if tk := ctx.GetHeader(configs.GetConfig().Jwt.HeaderKey); tk != "" {
+		_ = h.tokenManager.Store().Delete(tk)
+		ctx.Header(configs.GetConfig().Jwt.HeaderKey, "")
+		fmt.Printf("tk config delete header %s is exists: %v\n", tk, h.tokenManager.Store().Exists(tk))
+	}
+
+	if rtk := ctx.GetHeader(configs.GetConfig().Jwt.RefersKey); rtk != "" {
+		_ = h.tokenManager.Store().Delete(rtk)
+		ctx.Header(configs.GetConfig().Jwt.RefersKey, "")
+		fmt.Printf("tk config refresh delete header %s is exists: %v\n", rtk, h.tokenManager.Store().Exists(rtk))
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"code":    http.StatusOK,
+		"message": "You have logged out, looking forward to the next return of the king",
+		"data":    gin.H{},
 	})
 }

@@ -40,6 +40,7 @@ func (uRoute *UserRouter) Register(r *gin.Engine) *UserRouter {
 		{
 			mUserRouter.GET("/me", uRoute.userHandle.Me)
 			mUserRouter.PUT("/refresh/token", uRoute.userHandle.RefersToken)
+			mUserRouter.DELETE("/logout", uRoute.userHandle.Logout)
 		}
 	}
 	return uRoute

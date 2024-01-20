@@ -33,6 +33,10 @@ type Handler interface {
 	// RefersToken refers token
 	// Router /api/user/refersh/token [put]
 	RefersToken(ctx *gin.Context)
+
+	// Logout logout user token
+	// Router /api/user/logout [delete]
+	Logout(ctx *gin.Context)
 }
 
 type handler struct {
