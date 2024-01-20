@@ -19,14 +19,20 @@ var (
 	Q              = new(Query)
 	Account        *account
 	AccountConnect *accountConnect
+	Config         *config
+	GithubAccount  *githubAccount
 	User           *user
+	VerifyCode     *verifyCode
 )
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	*Q = *Use(db, opts...)
 	Account = &Q.Account
 	AccountConnect = &Q.AccountConnect
+	Config = &Q.Config
+	GithubAccount = &Q.GithubAccount
 	User = &Q.User
+	VerifyCode = &Q.VerifyCode
 }
 
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
@@ -34,7 +40,10 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		db:             db,
 		Account:        newAccount(db, opts...),
 		AccountConnect: newAccountConnect(db, opts...),
+		Config:         newConfig(db, opts...),
+		GithubAccount:  newGithubAccount(db, opts...),
 		User:           newUser(db, opts...),
+		VerifyCode:     newVerifyCode(db, opts...),
 	}
 }
 
@@ -43,7 +52,10 @@ type Query struct {
 
 	Account        account
 	AccountConnect accountConnect
+	Config         config
+	GithubAccount  githubAccount
 	User           user
+	VerifyCode     verifyCode
 }
 
 func (q *Query) Available() bool { return q.db != nil }
@@ -53,7 +65,10 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		db:             db,
 		Account:        q.Account.clone(db),
 		AccountConnect: q.AccountConnect.clone(db),
+		Config:         q.Config.clone(db),
+		GithubAccount:  q.GithubAccount.clone(db),
 		User:           q.User.clone(db),
+		VerifyCode:     q.VerifyCode.clone(db),
 	}
 }
 
@@ -70,21 +85,30 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		db:             db,
 		Account:        q.Account.replaceDB(db),
 		AccountConnect: q.AccountConnect.replaceDB(db),
+		Config:         q.Config.replaceDB(db),
+		GithubAccount:  q.GithubAccount.replaceDB(db),
 		User:           q.User.replaceDB(db),
+		VerifyCode:     q.VerifyCode.replaceDB(db),
 	}
 }
 
 type queryCtx struct {
 	Account        IAccountDo
 	AccountConnect IAccountConnectDo
+	Config         IConfigDo
+	GithubAccount  IGithubAccountDo
 	User           IUserDo
+	VerifyCode     IVerifyCodeDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
 		Account:        q.Account.WithContext(ctx),
 		AccountConnect: q.AccountConnect.WithContext(ctx),
+		Config:         q.Config.WithContext(ctx),
+		GithubAccount:  q.GithubAccount.WithContext(ctx),
 		User:           q.User.WithContext(ctx),
+		VerifyCode:     q.VerifyCode.WithContext(ctx),
 	}
 }
 

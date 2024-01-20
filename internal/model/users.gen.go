@@ -12,20 +12,20 @@ const TableNameUser = "users"
 
 // User mapped from table <users>
 type User struct {
-	ID             uint64     `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true;index:idx_created_at,priority:1;index:idx_last_activity_at,priority:1;comment:用户唯一编号" json:"id"` // 用户唯一编号
-	AccountID      uint64     `gorm:"column:account_id;type:bigint unsigned;not null;uniqueIndex:idx_users_account_id,priority:1;comment:用户所属账户" json:"account_id"`                                // 用户所属账户
-	UserName       string     `gorm:"column:user_name;type:varchar(64);uniqueIndex:idx_users_user_name,priority:1;comment:用户名" json:"user_name"`                                                   // 用户名
-	NickName       string     `gorm:"column:nick_name;type:varchar(64);comment:昵称" json:"nick_name"`                                                                                               // 昵称
-	Password       string     `gorm:"column:password;type:char(64);comment:密码" json:"password"`                                                                                                    // 密码
-	Gender         *uint32    `gorm:"column:gender;type:tinyint unsigned;not null;default:1;comment:性别" json:"gender"`                                                                             // 性别
-	Bio            string     `gorm:"column:bio;type:text;comment:个人简介" json:"bio"`                                                                                                                // 个人简介
-	LastActivityAt *time.Time `gorm:"column:last_activity_at;type:timestamp;comment:最后活跃时间" json:"last_activity_at"`                                                                               // 最后活跃时间
-	IsEnabled      *uint32    `gorm:"column:is_enabled;type:tinyint unsigned;not null;default:1;comment:是否启用0.封号/1.正常" json:"is_enabled"`                                                          // 是否启用0.封号/1.正常
-	WaitDelete     uint32     `gorm:"column:wait_delete;type:tinyint unsigned;not null;comment:是否等待删除0.否/1.是/2.永久" json:"wait_delete"`                                                             // 是否等待删除0.否/1.是/2.永久
-	WaitDeleteAt   *time.Time `gorm:"column:wait_delete_at;type:timestamp;index:idx_wait_delete_at,priority:1;comment:等待删除时间" json:"wait_delete_at"`                                               // 等待删除时间
-	CreatedAt      *time.Time `gorm:"column:created_at;type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"created_at"`                                                          // 创建时间
-	UpdatedAt      *time.Time `gorm:"column:updated_at;type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"updated_at"`                                                          // 更新时间
-	DeletedAt      *time.Time `gorm:"column:deleted_at;type:timestamp;comment:删除时间" json:"deleted_at"`                                                                                             // 删除时间
+	ID             uint64     `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true;comment:用户唯一编号" json:"id"`                                              // 用户唯一编号
+	AccountID      uint64     `gorm:"column:account_id;type:bigint unsigned;not null;uniqueIndex:idx_users_account_id,priority:1;comment:用户所属账户" json:"account_id"`       // 用户所属账户
+	UserName       string     `gorm:"column:user_name;type:varchar(64);uniqueIndex:idx_users_user_name,priority:1;comment:用户名" json:"user_name"`                          // 用户名
+	NickName       string     `gorm:"column:nick_name;type:varchar(64);comment:昵称" json:"nick_name"`                                                                      // 昵称
+	Password       string     `gorm:"column:password;type:char(64);comment:密码" json:"password"`                                                                           // 密码
+	Gender         *uint32    `gorm:"column:gender;type:tinyint unsigned;not null;default:1;comment:性别" json:"gender"`                                                    // 性别
+	Bio            string     `gorm:"column:bio;type:text;comment:个人简介" json:"bio"`                                                                                       // 个人简介
+	LastActivityAt *time.Time `gorm:"column:last_activity_at;type:timestamp;index:idx_last_activity_at,priority:1;comment:最后活跃时间" json:"last_activity_at"`                // 最后活跃时间
+	IsEnabled      *uint32    `gorm:"column:is_enabled;type:tinyint unsigned;not null;default:1;comment:是否启用0.封号/1.正常" json:"is_enabled"`                                 // 是否启用0.封号/1.正常
+	WaitDelete     uint32     `gorm:"column:wait_delete;type:tinyint unsigned;not null;comment:是否等待删除0.否/1.是/2.永久" json:"wait_delete"`                                    // 是否等待删除0.否/1.是/2.永久
+	WaitDeleteAt   *time.Time `gorm:"column:wait_delete_at;type:timestamp;index:idx_wait_delete_at,priority:1;comment:等待删除时间" json:"wait_delete_at"`                      // 等待删除时间
+	CreatedAt      *time.Time `gorm:"column:created_at;type:timestamp;not null;index:idx_created_at,priority:1;default:CURRENT_TIMESTAMP;comment:创建时间" json:"created_at"` // 创建时间
+	UpdatedAt      *time.Time `gorm:"column:updated_at;type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"updated_at"`                                 // 更新时间
+	DeletedAt      *time.Time `gorm:"column:deleted_at;type:timestamp;comment:删除时间" json:"deleted_at"`                                                                    // 删除时间
 }
 
 // TableName User's table name
