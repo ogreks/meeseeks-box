@@ -42,11 +42,10 @@ func NewUserJwtMiddleware(
 
 // RefreshToken inner refresh token
 func (uj *UserJwtMiddleware) RefreshToken(ctx *gin.Context, userTk string, claim *UserClaims) {
-	if time.Now().Sub(time.Unix(claim.ExpiresAt, 0)).Abs() > (uj.RefreshTimeout * time.Second) {
+	// 时间判断需要更为准确
+	if time.Now().Before(time.Unix(claim.ExpiresAt, 0)) {
 		return
 	}
-
-	fmt.Printf("token refresh: %v : %v\n", time.Now().Sub(time.Unix(claim.ExpiresAt, 0)).Abs(), (uj.RefreshTimeout * time.Second))
 
 	// refresh token
 	rft := ctx.Request.Header.Get(uj.RefreshKey)
@@ -79,7 +78,7 @@ func (uj *UserJwtMiddleware) RefreshToken(ctx *gin.Context, userTk string, claim
 	}
 
 	// determine whether the token needs to be refreshed
-	if time.Now().Sub(time.Unix(uc.ExpiresAt, 0)).Abs() > (uj.HeaderTimeout+10)*time.Second {
+	if time.Now().Sub(time.Unix(uc.ExpiresAt, 0)).Abs() > uj.HeaderTimeout*time.Second {
 		return
 	}
 
@@ -113,7 +112,7 @@ func (uj *UserJwtMiddleware) Builder() gin.HandlerFunc {
 		tk := segs[1]
 		// parse token
 		c, err := uj.Token.Validate(tk)
-		if err != nil {
+		if err != nil && !errors.Is(err, token.ErrTokenTimeout) {
 			_ = ctx.AbortWithError(http.StatusUnauthorized, err)
 			return
 		}

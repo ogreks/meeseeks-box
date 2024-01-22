@@ -380,15 +380,19 @@ func (h *handler) RefersToken(ctx *gin.Context) {
 // Router /api/user/logout [delete]
 func (h *handler) Logout(ctx *gin.Context) {
 	if tk := ctx.GetHeader(configs.GetConfig().Jwt.HeaderKey); tk != "" {
-		_ = h.tokenManager.Store().Delete(tk)
-		ctx.Header(configs.GetConfig().Jwt.HeaderKey, "")
-		fmt.Printf("tk config delete header %s is exists: %v\n", tk, h.tokenManager.Store().Exists(tk))
+		segs := strings.Split(tk, " ")
+		if len(segs) > 0 {
+			if len(segs) < 2 {
+				segs = []string{segs[0], segs[0]}
+			}
+			_ = h.tokenManager.Store().Delete(segs[1])
+			ctx.Header(configs.GetConfig().Jwt.HeaderKey, "")
+		}
 	}
 
 	if rtk := ctx.GetHeader(configs.GetConfig().Jwt.RefersKey); rtk != "" {
 		_ = h.tokenManager.Store().Delete(rtk)
 		ctx.Header(configs.GetConfig().Jwt.RefersKey, "")
-		fmt.Printf("tk config refresh delete header %s is exists: %v\n", rtk, h.tokenManager.Store().Exists(rtk))
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{

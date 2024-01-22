@@ -141,7 +141,6 @@ func (ds *DefaultStore[T]) loadSyncMap() {
 	var m = make(map[T]time.Time)
 	err := json.Unmarshal(ret, &m)
 	if err != nil {
-		panic(err)
 		ds.logger.Panic("unmarshal error", zap.Error(err))
 		return
 	}
