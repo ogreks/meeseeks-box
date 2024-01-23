@@ -29,7 +29,6 @@ func InitApiServer() *gin.Engine {
 		ioc.InitLarkMessageDispatcher,
 		// init middleware
 		iocApi.InitMiddleware,
-		iocApi.InitJwtMiddleware,
 		// init api server
 		iocApi.InitApiServer,
 	)

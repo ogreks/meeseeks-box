@@ -2,7 +2,6 @@ package api
 
 import (
 	"github.com/gin-contrib/cors"
-	"github.com/golang-jwt/jwt"
 	"net"
 	"net/http"
 	"time"
@@ -22,7 +21,6 @@ func InitApiServer(
 	db orm.Repo, // db
 	logger *zap.Logger, // log
 	middlewares []gin.HandlerFunc, // middleware
-	jwtMiddleware *middleware.JwtMiddleware, // jwt middleware
 	client *lark.Client, // fei shu client
 	msg feishuMessage.MessageHandleInterface, // fei shu message event
 	tokenStore token.Store[string], // store token server
@@ -43,7 +41,6 @@ func InitApiServer(
 		Engine:            g,
 		DB:                db,
 		Log:               logger,
-		AuthMiddleware:    jwtMiddleware,
 		MessageDispatcher: msg,
 		TokenStore:        tokenStore,
 	})
@@ -134,16 +131,4 @@ func InitMiddleware(logger *zap.Logger, cfg configs.Config) []gin.HandlerFunc {
 			MaxAge: 12 * time.Hour,
 		}),
 	}
-}
-
-// InitJwtMiddleware init jwt middleware
-func InitJwtMiddleware(cfg configs.Config) *middleware.JwtMiddleware {
-	return middleware.NewJWTMiddleware(
-		middleware.WithKeyFunc(func() (any, error) {
-			return []byte(cfg.Jwt.Secret), nil
-		}),
-		middleware.WithClaims(&middleware.GlobalJWT{}),
-		middleware.WithSigningMethod(jwt.SigningMethodHS512),
-		middleware.WithJWTHeaderKey(cfg.Jwt.HeaderKey),
-	)
 }

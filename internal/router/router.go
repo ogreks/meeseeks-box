@@ -3,7 +3,6 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	feishuMessage "github.com/ogreks/meeseeks-box/internal/pkg/feishu/message"
-	"github.com/ogreks/meeseeks-box/internal/pkg/middleware"
 	"github.com/ogreks/meeseeks-box/internal/pkg/token"
 	"github.com/ogreks/meeseeks-box/internal/repository/orm"
 	"github.com/ogreks/meeseeks-box/internal/router/user"
@@ -16,7 +15,6 @@ type Handler struct {
 	DB     orm.Repo
 	Log    *zap.Logger
 
-	AuthMiddleware    *middleware.JwtMiddleware
 	MessageDispatcher feishuMessage.MessageHandleInterface
 	TokenStore        token.Store[string]
 }
