@@ -2,13 +2,11 @@ package user
 
 import (
 	"fmt"
-	"github.com/golang-jwt/jwt"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/ogreks/meeseeks-box/configs"
-	userJwt "github.com/ogreks/meeseeks-box/internal/pkg/middleware/auth"
 	UserSvc "github.com/ogreks/meeseeks-box/internal/service/user"
 	"github.com/rs/xid"
 	"go.uber.org/zap"
@@ -64,15 +62,7 @@ func (h *handler) LoginGITHub(ctx *gin.Context) {
 		return
 	}
 
-	tk, err := h.tokenManager.CreateToken(ctx.Request.Context(), &userJwt.UserClaims{
-		StandardClaims: jwt.StandardClaims{
-			Subject:   ac.Aid,
-			Audience:  "api",
-			Issuer:    configs.GetConfig().Jwt.Issuer,
-			ExpiresAt: time.Now().Add(time.Duration(configs.GetConfig().Jwt.Expire) * time.Second).Unix(),
-		},
-		Content: ac.Aid,
-	}, time.Duration(configs.GetConfig().Jwt.Expire)*time.Second+(20*time.Second))
+	tk, rest, err := h.createToken(ctx, ac.Aid)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"code":    500,
@@ -81,30 +71,6 @@ func (h *handler) LoginGITHub(ctx *gin.Context) {
 		})
 		return
 	}
-
-	ctx.Request.Header.Set(configs.GetConfig().Jwt.HeaderKey, fmt.Sprintf("Bearer %s", tk))
-	ctx.Header(configs.GetConfig().Jwt.HeaderKey, fmt.Sprintf("Bearer %s", tk))
-
-	rest, err := h.tokenManager.CreateToken(ctx.Request.Context(), &userJwt.UserClaims{
-		StandardClaims: jwt.StandardClaims{
-			Subject:   ac.Aid,
-			Audience:  "refresh",
-			Issuer:    configs.GetConfig().Jwt.Issuer,
-			ExpiresAt: time.Now().Add(time.Duration(configs.GetConfig().Jwt.RefreshTimeout) * time.Second).Unix(),
-		},
-		Content: ac.Aid,
-	}, time.Duration(configs.GetConfig().Jwt.RefreshTimeout)*time.Second+(20*time.Second))
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"code":    500,
-			"message": "server error not",
-			"data":    err.Error(),
-		})
-		return
-	}
-
-	ctx.Request.Header.Set(configs.GetConfig().Jwt.RefersKey, rest)
-	ctx.Header(configs.GetConfig().Jwt.RefersKey, rest)
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"code":    200,

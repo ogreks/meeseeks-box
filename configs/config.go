@@ -53,10 +53,17 @@ func (c *Config) GetLog() Log {
 
 // initDefault 初始化默认配置
 func initDefaultConfig() {
+	// server init
+	if len(cfg.Server.CorsAllowOrigins) == 0 {
+		cfg.Server.CorsAllowOrigins = []string{"*"}
+	}
+
+	// database init
 	if cfg.Database.LogPath == "" {
 		cfg.Database.LogPath = "./log/sql.log"
 	}
 
+	// jwt init
 	if cfg.Jwt.Issuer == "" {
 		cfg.Jwt.Issuer = "meeseeks-box"
 	}

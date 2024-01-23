@@ -1,12 +1,16 @@
 package user
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
+	"github.com/ogreks/meeseeks-box/configs"
+	userJwt "github.com/ogreks/meeseeks-box/internal/pkg/middleware/auth"
 	"github.com/ogreks/meeseeks-box/internal/pkg/token"
 	"github.com/ogreks/meeseeks-box/internal/repository/orm"
 	"github.com/ogreks/meeseeks-box/internal/service/user"
 	"go.uber.org/zap"
+	"time"
 )
 
 var _ Handler = (*handler)(nil)
@@ -54,3 +58,40 @@ func New(db orm.Repo, logger *zap.Logger, tkm token.Token[string, func() (jwt.Si
 }
 
 func (h *handler) i() {}
+
+// createToken create user token
+func (h *handler) createToken(ctx *gin.Context, aid string) (string, string, error) {
+	tk, err := h.tokenManager.CreateToken(ctx.Request.Context(), &userJwt.UserClaims{
+		StandardClaims: jwt.StandardClaims{
+			Subject:   aid,
+			Audience:  "api",
+			Issuer:    configs.GetConfig().Jwt.Issuer,
+			ExpiresAt: time.Now().Add(time.Duration(configs.GetConfig().Jwt.Expire) * time.Second).Unix(),
+		},
+		Content: aid,
+	}, time.Duration(configs.GetConfig().Jwt.Expire)*time.Second+(20*time.Second))
+	if err != nil {
+		return "", "", err
+	}
+
+	ctx.Request.Header.Set(configs.GetConfig().Jwt.HeaderKey, fmt.Sprintf("Bearer %s", tk))
+	ctx.Header(configs.GetConfig().Jwt.HeaderKey, fmt.Sprintf("Bearer %s", tk))
+
+	rest, err := h.tokenManager.CreateToken(ctx.Request.Context(), &userJwt.UserClaims{
+		StandardClaims: jwt.StandardClaims{
+			Subject:   aid,
+			Audience:  "refresh",
+			Issuer:    configs.GetConfig().Jwt.Issuer,
+			ExpiresAt: time.Now().Add(time.Duration(configs.GetConfig().Jwt.RefreshTimeout) * time.Second).Unix(),
+		},
+		Content: aid,
+	}, time.Duration(configs.GetConfig().Jwt.RefreshTimeout)*time.Second+(20*time.Second))
+	if err != nil {
+		return "", "", err
+	}
+
+	ctx.Request.Header.Set(configs.GetConfig().Jwt.RefersKey, rest)
+	ctx.Header(configs.GetConfig().Jwt.RefersKey, rest)
+
+	return tk, rest, nil
+}

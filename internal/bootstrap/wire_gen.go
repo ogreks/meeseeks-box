@@ -20,7 +20,7 @@ func InitApiServer() *gin.Engine {
 	repo := ioc.InitORM(config)
 	driver := ioc.InitLogDriver(config)
 	logger := ioc.InitLogger(config, driver)
-	v := api.InitMiddleware(logger)
+	v := api.InitMiddleware(logger, config)
 	jwtMiddleware := api.InitJwtMiddleware(config)
 	client := ioc.InitLarkClient(config, logger)
 	messageHandleInterface := ioc.InitLarkMessageDispatcher(config, logger, repo, client)

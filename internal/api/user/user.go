@@ -13,7 +13,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/ogreks/meeseeks-box/configs"
-	"github.com/ogreks/meeseeks-box/internal/pkg/middleware"
 	UserSvc "github.com/ogreks/meeseeks-box/internal/service/user"
 	"github.com/rs/xid"
 	"go.uber.org/zap"
@@ -121,8 +120,7 @@ func (h *handler) Login(ctx *gin.Context) {
 		return
 	}
 
-	claims := middleware.NewGlobalJWT(u.Aid, time.Duration(configs.GetConfig().Jwt.Expire)*time.Second)
-	token, err := claims.CreateToken()
+	tk, rest, err := h.createToken(ctx, u.Aid)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"code":    500,
@@ -132,16 +130,15 @@ func (h *handler) Login(ctx *gin.Context) {
 		return
 	}
 
-	ctx.Request.Header.Set(configs.GetConfig().Jwt.HeaderKey, fmt.Sprintf("Bearer %s", token))
-	ctx.Header("Authorization", fmt.Sprintf("Bearer %s", token))
-
 	ctx.JSON(http.StatusOK, gin.H{
 		"code":    200,
 		"message": "success",
 		"data": gin.H{
-			"access_id": u.Aid,
-			"token":     token,
-			"expire":    claims.ExpiresAt,
+			"access_id":            u.Aid,
+			"token":                tk,
+			"expire":               configs.GetConfig().Jwt.Expire - 5,
+			"refresh_token":        rest,
+			"refresh_token_expire": (time.Duration(configs.GetConfig().Jwt.Expire) * 10) - 5,
 		},
 	})
 }

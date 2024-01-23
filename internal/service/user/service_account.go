@@ -117,6 +117,14 @@ func (s *service) LoginUserByGITHub(ctx context.Context, account AccountPlatform
 		return nil, err
 	}
 
+	// update last login time
+	go func(aid uint64, t time.Time) {
+		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+		defer cancel()
+
+		_ = s.domain.UpdateLastLoginAtByAccountId(ctx, aid, t)
+	}(ac.ID, time.Now())
+
 	return &UserAccount{
 		Aid:         ac.Aid,
 		LastLoginAt: *ac.LastLoginAt,

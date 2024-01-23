@@ -58,6 +58,8 @@ type Server struct {
 	ReadTimeout int `mapstructure:"read_timeout"`
 	// server log path (default: ./log/server.log)
 	LogPath string `mapstructure:"log_path"`
+	// server cors config
+	CorsAllowOrigins []string `mapstructure:"allow_origins"`
 }
 
 type Jwt struct {

@@ -1,12 +1,13 @@
 package api
 
 import (
+	"github.com/gin-contrib/cors"
+	"github.com/golang-jwt/jwt"
 	"net"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt"
 	lark "github.com/larksuite/oapi-sdk-go/v3"
 	"github.com/ogreks/meeseeks-box/configs"
 	feishuMessage "github.com/ogreks/meeseeks-box/internal/pkg/feishu/message"
@@ -118,10 +119,20 @@ func InitServiceRoute(g *gin.Engine) {
 }
 
 // InitMiddleware init middleware
-func InitMiddleware(logger *zap.Logger) []gin.HandlerFunc {
+func InitMiddleware(logger *zap.Logger, cfg configs.Config) []gin.HandlerFunc {
 	return []gin.HandlerFunc{
 		middleware.Recovery(logger),
 		middleware.Trace(),
+		middleware.CorsWithConfig(cors.Config{
+			AllowCredentials: true,
+			AllowOrigins:     cfg.Server.CorsAllowOrigins,
+			AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
+			AllowHeaders: []string{
+				"Origin", "Content-Length", "Content-Type", "X-Trace-Id",
+				"Authorization", "Authenticate", "Authorization_At", "Authenticate_At",
+			},
+			MaxAge: 12 * time.Hour,
+		}),
 	}
 }
 

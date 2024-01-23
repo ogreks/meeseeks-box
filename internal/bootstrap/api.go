@@ -2,6 +2,7 @@ package bootstrap
 
 import (
 	"context"
+	"crypto/tls"
 	"errors"
 	"fmt"
 	"net/http"
@@ -50,6 +51,9 @@ func (a *server) Start(ctx context.Context) error {
 			Addr:        fmt.Sprintf("%s:%d", a.address, a.port),
 			Handler:     server,
 			ReadTimeout: time.Second * time.Duration(configs.GetConfig().GetServer().ReadTimeout),
+			TLSConfig: &tls.Config{
+				NextProtos: []string{"http/1.1", "http/1.2", "http/2"},
+			},
 		}
 
 		go func() {
