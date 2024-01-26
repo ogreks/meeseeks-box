@@ -13,16 +13,16 @@ const TableNameConfig = "configs"
 // Config mapped from table <configs>
 type Config struct {
 	ID             uint64     `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true" json:"id"`
-	ItemKey        string     `gorm:"column:item_key;type:varchar(64);not null;uniqueIndex:idx_item_key,priority:1;comment:键名" json:"item_key"` // 键名
-	ItemValue      string     `gorm:"column:item_value;type:longtext;comment:键值" json:"item_value"`                                             // 键值
-	ItemType       *string    `gorm:"column:item_type;type:varchar(16);not null;default:string;comment:键类型" json:"item_type"`                   // 键类型
-	ItemTag        string     `gorm:"column:item_tag;type:varchar(32);not null;comment:键标签" json:"item_tag"`                                    // 键标签
-	IsMultilingual uint32     `gorm:"column:is_multilingual;type:tinyint unsigned;not null;comment:是否多语言:0.否 / 1.是" json:"is_multilingual"`     // 是否多语言:0.否 / 1.是
-	IsCustom       *uint32    `gorm:"column:is_custom;type:tinyint unsigned;not null;default:1;comment:是否为自定义:0.否 / 1.是" json:"is_custom"`      // 是否为自定义:0.否 / 1.是
-	IsAPI          uint32     `gorm:"column:is_api;type:tinyint unsigned;not null;comment:是否接口输出:0.禁止 / 1.允许" json:"is_api"`                    // 是否接口输出:0.禁止 / 1.允许
-	CreatedAt      time.Time  `gorm:"column:created_at;type:timestamp;not null;index:idx_created_at,priority:1;comment:创建时间" json:"created_at"` // 创建时间
-	UpdatedAt      time.Time  `gorm:"column:updated_at;type:timestamp;not null;comment:更新时间" json:"updated_at"`                                 // 更新时间
-	DeletedAt      *time.Time `gorm:"column:deleted_at;type:timestamp;comment:删除时间" json:"deleted_at"`                                          // 删除时间
+	ItemKey        string     `gorm:"column:item_key;type:varchar(64);not null;uniqueIndex:idx_item_key,priority:1;comment:键名" json:"item_key"`               // 键名
+	ItemValue      string     `gorm:"column:item_value;type:longtext;comment:键值" json:"item_value"`                                                           // 键值
+	ItemType       *string    `gorm:"column:item_type;type:varchar(16);not null;default:string;comment:键类型" json:"item_type"`                                 // 键类型
+	ItemTag        string     `gorm:"column:item_tag;type:varchar(32);not null;comment:键标签" json:"item_tag"`                                                  // 键标签
+	IsMultilingual uint32     `gorm:"column:is_multilingual;type:tinyint unsigned;not null;comment:是否多语言:0.否 / 1.是" json:"is_multilingual"`                   // 是否多语言:0.否 / 1.是
+	IsCustom       *uint32    `gorm:"column:is_custom;type:tinyint unsigned;not null;default:1;comment:是否为自定义:0.否 / 1.是" json:"is_custom"`                    // 是否为自定义:0.否 / 1.是
+	IsAPI          uint32     `gorm:"column:is_api;type:tinyint unsigned;not null;comment:是否接口输出:0.禁止 / 1.允许" json:"is_api"`                                  // 是否接口输出:0.禁止 / 1.允许
+	CreatedAt      *time.Time `gorm:"column:created_at;type:timestamp;not null;index:idx_created_at,priority:1;default:now();comment:创建时间" json:"created_at"` // 创建时间
+	UpdatedAt      *time.Time `gorm:"column:updated_at;type:timestamp;not null;default:now();comment:更新时间" json:"updated_at"`                                 // 更新时间
+	DeletedAt      *time.Time `gorm:"column:deleted_at;type:timestamp;comment:删除时间" json:"deleted_at"`                                                        // 删除时间
 }
 
 // TableName Config's table name

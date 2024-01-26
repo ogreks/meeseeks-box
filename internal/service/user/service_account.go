@@ -3,9 +3,9 @@ package user
 import (
 	"context"
 	"errors"
+	"github.com/ogreks/meeseeks-box/internal/domain"
 	"time"
 
-	udomain "github.com/ogreks/meeseeks-box/internal/domain/user"
 	"github.com/ogreks/meeseeks-box/internal/model"
 	"github.com/ogreks/meeseeks-box/internal/pkg/utils"
 )
@@ -34,13 +34,13 @@ type AccountPlatform struct {
 	MoreJson string
 }
 
-func (s *service) CreatePlatformAccount(ctx context.Context, account AccountPlatform) error {
+func (s *service) SavePlatformAccount(ctx context.Context, account AccountPlatform) error {
 	_, err := s.domain.FindAccountConnect(ctx, account.PlatformID, account.AccountID)
 	if err == nil {
 		return nil
 	}
 
-	if !errors.Is(err, udomain.AccountConnectNotFound) {
+	if !errors.Is(err, domain.NotFound) {
 		return err
 	}
 
@@ -92,14 +92,14 @@ func (s *service) LoginUserByGITHub(ctx context.Context, account AccountPlatform
 		return nil, ErrorAccountParamsNotFound
 	}
 
-	err := s.CreatePlatformAccount(ctx, account)
+	err := s.SavePlatformAccount(ctx, account)
 	if err != nil {
 		return nil, err
 	}
 
 	accountConnect, err := s.domain.FindAccountConnect(ctx, account.PlatformID, account.AccountID)
 	if err != nil {
-		if errors.Is(err, udomain.AccountConnectNotFound) {
+		if errors.Is(err, domain.NotFound) {
 			return nil, ErrorAccountConnectNotFound
 		}
 
@@ -110,7 +110,7 @@ func (s *service) LoginUserByGITHub(ctx context.Context, account AccountPlatform
 		ID: accountConnect.AccountID,
 	})
 	if err != nil {
-		if errors.Is(err, udomain.AccountNotFound) {
+		if errors.Is(err, domain.NotFound) {
 			return nil, ErrorAccountNotEnable
 		}
 
@@ -152,7 +152,7 @@ type User struct {
 func (s *service) GetUserByAccountAid(ctx context.Context, aid string) (*User, error) {
 	account, err := s.domain.FindAccount(ctx, model.Account{Aid: aid})
 	if err != nil {
-		if errors.Is(err, udomain.AccountNotFound) {
+		if errors.Is(err, domain.NotFound) {
 			return nil, ErrorAccountNotFound
 		}
 		return nil, err
@@ -162,7 +162,7 @@ func (s *service) GetUserByAccountAid(ctx context.Context, aid string) (*User, e
 		AccountID: account.ID,
 	})
 	if err != nil {
-		if errors.Is(err, udomain.UserNotFound) {
+		if errors.Is(err, domain.NotFound) {
 			return nil, ErrorUserNotFound
 		}
 		return nil, err

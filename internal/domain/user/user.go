@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"errors"
+	"github.com/ogreks/meeseeks-box/internal/domain"
 	"time"
 
 	"github.com/ogreks/meeseeks-box/internal/dao"
@@ -11,12 +12,6 @@ import (
 	"go.uber.org/zap"
 	"gorm.io/gen/field"
 	"gorm.io/gorm"
-)
-
-var (
-	UserNotFound           = errors.New("user not found")
-	AccountNotFound        = errors.New("account not found")
-	AccountConnectNotFound = errors.New("account connect not found")
 )
 
 type UDomain interface {
@@ -62,7 +57,7 @@ func (s *User) CreateUser(ctx context.Context, account model.Account, user model
 	return err
 }
 
-// CreatePlatformAccount create user by connect platform account
+// CreatePlatformAccount create user by connect open account
 func (s *User) CreatePlatformAccount(ctx context.Context, account model.Account, accountConnect model.AccountConnect, user model.User) error {
 	return s.dao.Transaction(func(tx *dao.Query) error {
 		err := tx.Account.WithContext(ctx).Create(&account)
@@ -113,7 +108,7 @@ func (s *User) UpdateLastLoginAtByAccountId(ctx context.Context, Aid uint64, t t
 func (s *User) FindAccount(ctx context.Context, account model.Account) (*model.Account, error) {
 	a, err := s.dao.Account.WithContext(ctx).Where(field.Attrs(account)).First()
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, AccountNotFound
+		return nil, domain.NotFound
 	}
 
 	return a, err
@@ -123,13 +118,13 @@ func (s *User) FindAccount(ctx context.Context, account model.Account) (*model.A
 func (s *User) FindUser(ctx context.Context, user model.User) (*model.User, error) {
 	u, err := s.dao.User.WithContext(ctx).Where(field.Attrs(user)).First()
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, UserNotFound
+		return nil, domain.NotFound
 	}
 
 	return u, err
 }
 
-// FindAccountConnect get connect platform account
+// FindAccountConnect get connect open account
 func (s *User) FindAccountConnect(ctx context.Context, connectID uint32, connectAccountID string) (*model.AccountConnect, error) {
 	accountConnect, err := s.dao.AccountConnect.
 		WithContext(ctx).
@@ -138,7 +133,7 @@ func (s *User) FindAccountConnect(ctx context.Context, connectID uint32, connect
 		First()
 
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, AccountConnectNotFound
+		return nil, domain.NotFound
 	}
 
 	return accountConnect, err

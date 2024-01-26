@@ -25,6 +25,7 @@ require (
 
 require (
 	github.com/gin-contrib/cors v1.5.0
+	github.com/google/uuid v1.4.0
 	go.uber.org/atomic v1.11.0
 	go.uber.org/mock v0.4.0
 )

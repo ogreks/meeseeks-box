@@ -125,7 +125,7 @@ func InitMiddleware(logger *zap.Logger, cfg configs.Config) []gin.HandlerFunc {
 			AllowOrigins:     cfg.Server.CorsAllowOrigins,
 			AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
 			AllowHeaders: []string{
-				"Origin", "Content-Length", "Content-Type", "X-Trace-Id",
+				"Origin", "Content-Length", "Content-Type", "X-Trace-Id", "Date",
 				"Authorization", "Authenticate", "Authorization_At", "Authenticate_At",
 			},
 			MaxAge: 12 * time.Hour,

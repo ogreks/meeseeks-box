@@ -11,18 +11,19 @@ var (
 	defaultConfigFile = fmt.Sprintf("%s/config.yml", command.HelpGetWorkDir())
 	daoPath           = "internal/dao"
 	modelConfigs      = map[string][]any{
-		"system":  systemModels(),
-		"user":    userModels(),
-		"account": accountModels(),
+		//"system":       systemModels(),
+		"user":         userModels(),
+		"account":      accountModels(),
+		"session_keys": sessionKeysModels(),
 	}
 )
 
-func systemModels() []any {
-	return []any{
-		&model.Config{},
-		&model.VerifyCode{},
-	}
-}
+//func systemModels() []any {
+//	return []any{
+//		&model.Config{},
+//		&model.VerifyCode{},
+//	}
+//}
 
 func userModels() []any {
 	return []any{
@@ -34,5 +35,11 @@ func accountModels() []any {
 	return []any{
 		&model.Account{},
 		&model.AccountConnect{},
+	}
+}
+
+func sessionKeysModels() []any {
+	return []any{
+		&model.SessionKey{},
 	}
 }

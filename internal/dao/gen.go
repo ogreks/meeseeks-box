@@ -16,59 +16,79 @@ import (
 )
 
 var (
-	Q              = new(Query)
-	Account        *account
-	AccountConnect *accountConnect
-	Config         *config
-	GithubAccount  *githubAccount
-	User           *user
-	VerifyCode     *verifyCode
+	Q                = new(Query)
+	Account          *account
+	AccountConnect   *accountConnect
+	Agreement        *agreement
+	AgreementVersion *agreementVersion
+	Config           *config
+	GithubAccount    *githubAccount
+	SessionKey       *sessionKey
+	User             *user
+	UserSignature    *userSignature
+	VerifyCode       *verifyCode
 )
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	*Q = *Use(db, opts...)
 	Account = &Q.Account
 	AccountConnect = &Q.AccountConnect
+	Agreement = &Q.Agreement
+	AgreementVersion = &Q.AgreementVersion
 	Config = &Q.Config
 	GithubAccount = &Q.GithubAccount
+	SessionKey = &Q.SessionKey
 	User = &Q.User
+	UserSignature = &Q.UserSignature
 	VerifyCode = &Q.VerifyCode
 }
 
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
-		db:             db,
-		Account:        newAccount(db, opts...),
-		AccountConnect: newAccountConnect(db, opts...),
-		Config:         newConfig(db, opts...),
-		GithubAccount:  newGithubAccount(db, opts...),
-		User:           newUser(db, opts...),
-		VerifyCode:     newVerifyCode(db, opts...),
+		db:               db,
+		Account:          newAccount(db, opts...),
+		AccountConnect:   newAccountConnect(db, opts...),
+		Agreement:        newAgreement(db, opts...),
+		AgreementVersion: newAgreementVersion(db, opts...),
+		Config:           newConfig(db, opts...),
+		GithubAccount:    newGithubAccount(db, opts...),
+		SessionKey:       newSessionKey(db, opts...),
+		User:             newUser(db, opts...),
+		UserSignature:    newUserSignature(db, opts...),
+		VerifyCode:       newVerifyCode(db, opts...),
 	}
 }
 
 type Query struct {
 	db *gorm.DB
 
-	Account        account
-	AccountConnect accountConnect
-	Config         config
-	GithubAccount  githubAccount
-	User           user
-	VerifyCode     verifyCode
+	Account          account
+	AccountConnect   accountConnect
+	Agreement        agreement
+	AgreementVersion agreementVersion
+	Config           config
+	GithubAccount    githubAccount
+	SessionKey       sessionKey
+	User             user
+	UserSignature    userSignature
+	VerifyCode       verifyCode
 }
 
 func (q *Query) Available() bool { return q.db != nil }
 
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
-		db:             db,
-		Account:        q.Account.clone(db),
-		AccountConnect: q.AccountConnect.clone(db),
-		Config:         q.Config.clone(db),
-		GithubAccount:  q.GithubAccount.clone(db),
-		User:           q.User.clone(db),
-		VerifyCode:     q.VerifyCode.clone(db),
+		db:               db,
+		Account:          q.Account.clone(db),
+		AccountConnect:   q.AccountConnect.clone(db),
+		Agreement:        q.Agreement.clone(db),
+		AgreementVersion: q.AgreementVersion.clone(db),
+		Config:           q.Config.clone(db),
+		GithubAccount:    q.GithubAccount.clone(db),
+		SessionKey:       q.SessionKey.clone(db),
+		User:             q.User.clone(db),
+		UserSignature:    q.UserSignature.clone(db),
+		VerifyCode:       q.VerifyCode.clone(db),
 	}
 }
 
@@ -82,33 +102,45 @@ func (q *Query) WriteDB() *Query {
 
 func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
-		db:             db,
-		Account:        q.Account.replaceDB(db),
-		AccountConnect: q.AccountConnect.replaceDB(db),
-		Config:         q.Config.replaceDB(db),
-		GithubAccount:  q.GithubAccount.replaceDB(db),
-		User:           q.User.replaceDB(db),
-		VerifyCode:     q.VerifyCode.replaceDB(db),
+		db:               db,
+		Account:          q.Account.replaceDB(db),
+		AccountConnect:   q.AccountConnect.replaceDB(db),
+		Agreement:        q.Agreement.replaceDB(db),
+		AgreementVersion: q.AgreementVersion.replaceDB(db),
+		Config:           q.Config.replaceDB(db),
+		GithubAccount:    q.GithubAccount.replaceDB(db),
+		SessionKey:       q.SessionKey.replaceDB(db),
+		User:             q.User.replaceDB(db),
+		UserSignature:    q.UserSignature.replaceDB(db),
+		VerifyCode:       q.VerifyCode.replaceDB(db),
 	}
 }
 
 type queryCtx struct {
-	Account        IAccountDo
-	AccountConnect IAccountConnectDo
-	Config         IConfigDo
-	GithubAccount  IGithubAccountDo
-	User           IUserDo
-	VerifyCode     IVerifyCodeDo
+	Account          IAccountDo
+	AccountConnect   IAccountConnectDo
+	Agreement        IAgreementDo
+	AgreementVersion IAgreementVersionDo
+	Config           IConfigDo
+	GithubAccount    IGithubAccountDo
+	SessionKey       ISessionKeyDo
+	User             IUserDo
+	UserSignature    IUserSignatureDo
+	VerifyCode       IVerifyCodeDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
-		Account:        q.Account.WithContext(ctx),
-		AccountConnect: q.AccountConnect.WithContext(ctx),
-		Config:         q.Config.WithContext(ctx),
-		GithubAccount:  q.GithubAccount.WithContext(ctx),
-		User:           q.User.WithContext(ctx),
-		VerifyCode:     q.VerifyCode.WithContext(ctx),
+		Account:          q.Account.WithContext(ctx),
+		AccountConnect:   q.AccountConnect.WithContext(ctx),
+		Agreement:        q.Agreement.WithContext(ctx),
+		AgreementVersion: q.AgreementVersion.WithContext(ctx),
+		Config:           q.Config.WithContext(ctx),
+		GithubAccount:    q.GithubAccount.WithContext(ctx),
+		SessionKey:       q.SessionKey.WithContext(ctx),
+		User:             q.User.WithContext(ctx),
+		UserSignature:    q.UserSignature.WithContext(ctx),
+		VerifyCode:       q.VerifyCode.WithContext(ctx),
 	}
 }
 

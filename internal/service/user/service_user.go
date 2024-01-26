@@ -3,9 +3,9 @@ package user
 import (
 	"context"
 	"errors"
+	"github.com/ogreks/meeseeks-box/internal/domain"
 	"time"
 
-	udomain "github.com/ogreks/meeseeks-box/internal/domain/user"
 	"github.com/ogreks/meeseeks-box/internal/model"
 	"github.com/ogreks/meeseeks-box/internal/pkg/utils"
 	"golang.org/x/crypto/bcrypt"
@@ -64,7 +64,7 @@ func (s *service) GetUserByUserName(ctx context.Context, userName string, passwo
 	})
 
 	if err != nil {
-		if errors.Is(err, udomain.UserNotFound) {
+		if errors.Is(err, domain.NotFound) {
 			return nil, ErrorAccountOrPassword
 		}
 	}
