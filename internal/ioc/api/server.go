@@ -85,6 +85,7 @@ func InitServerStatus(g *gin.Engine) {
 			"code": 200,
 			"msg":  "success",
 			"data": gin.H{
+				"time_zone":     time.Local.String(),
 				"register_time": registerTime.Format(time.RFC3339),
 				"run_time":      time.Now().Sub(registerTime).String(),
 				"now_time":      time.Now().Format(time.RFC3339),

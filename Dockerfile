@@ -15,7 +15,7 @@ FROM scratch as meeseeks-box
 WORKDIR /app
 
 ## set time zone
-COPY --from=builder /usr/share/zoneinfo/UTC /etc/localtime
+ENV TZ=UTC
 
 ## set builder
 COPY --from=builder /app/meeseeks-box .
