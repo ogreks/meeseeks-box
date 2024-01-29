@@ -12,6 +12,10 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build .
 ## build
 FROM alpine:latest as meeseeks-box
 
+RUN apk add -U tzdata \
+    && cp /usr/share/zoneinfo/Etc/UTC /etc/localtime \
+    && apk del tzdata
+
 WORKDIR /app
 
 ## set builder
