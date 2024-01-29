@@ -10,12 +10,9 @@ COPY . .
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build .
 
 ## build
-FROM scratch as meeseeks-box
+FROM alpine:latest as meeseeks-box
 
 WORKDIR /app
-
-## set time zone
-ENV TZ=UTC
 
 ## set builder
 COPY --from=builder /app/meeseeks-box .

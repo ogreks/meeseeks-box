@@ -8,13 +8,14 @@ import (
 
 // title meeseeks box cli
 func main() {
-
 	if tz := os.Getenv("TZ"); tz != "" {
 		var err error
 		time.Local, err = time.LoadLocation(tz)
 		if err != nil {
 			panic("timezone error: " + tz)
 		}
+	} else {
+		time.Local, _ = time.LoadLocation("UTC")
 	}
 
 	cmd.Execute()
