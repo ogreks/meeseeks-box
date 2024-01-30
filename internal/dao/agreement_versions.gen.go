@@ -33,8 +33,8 @@ func newAgreementVersion(db *gorm.DB, opts ...gen.DOOption) agreementVersion {
 	_agreementVersion.Title = field.NewString(tableName, "title")
 	_agreementVersion.Content = field.NewString(tableName, "content")
 	_agreementVersion.Version = field.NewString(tableName, "version")
-	_agreementVersion.CreatedAt = field.NewString(tableName, "created_at")
-	_agreementVersion.DeletedAt = field.NewString(tableName, "deleted_at")
+	_agreementVersion.CreatedAt = field.NewTime(tableName, "created_at")
+	_agreementVersion.DeletedAt = field.NewTime(tableName, "deleted_at")
 
 	_agreementVersion.fillFieldMap()
 
@@ -52,8 +52,8 @@ type agreementVersion struct {
 	Title       field.String // 协议标题
 	Content     field.String // 协议内容
 	Version     field.String // 协议版本号
-	CreatedAt   field.String // 协议发布时间
-	DeletedAt   field.String
+	CreatedAt   field.Time   // 协议发布时间
+	DeletedAt   field.Time
 
 	fieldMap map[string]field.Expr
 }
@@ -76,8 +76,8 @@ func (a *agreementVersion) updateTableName(table string) *agreementVersion {
 	a.Title = field.NewString(table, "title")
 	a.Content = field.NewString(table, "content")
 	a.Version = field.NewString(table, "version")
-	a.CreatedAt = field.NewString(table, "created_at")
-	a.DeletedAt = field.NewString(table, "deleted_at")
+	a.CreatedAt = field.NewTime(table, "created_at")
+	a.DeletedAt = field.NewTime(table, "deleted_at")
 
 	a.fillFieldMap()
 

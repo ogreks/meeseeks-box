@@ -12,6 +12,8 @@ import (
 	"gorm.io/gorm"
 )
 
+var _ SDomain = (*Session)(nil)
+
 type SDomain interface {
 	i()
 	// SaveSessionKey create/update other open request account

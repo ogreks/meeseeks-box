@@ -13,16 +13,16 @@ const TableNameGithubAccount = "github_accounts"
 // GithubAccount github account managers
 type GithubAccount struct {
 	ID         uint64     `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true" json:"id"`
-	Source     int32      `gorm:"column:source;type:int;comment:来源" json:"source"`                                                                                    // 来源
-	Username   string     `gorm:"column:username;type:varchar(50);index:idx_username,priority:1;comment:登录账户" json:"username"`                                        // 登录账户
-	Password   string     `gorm:"column:password;type:varchar(128);comment:加密登录密码" json:"password"`                                                                   // 加密登录密码
-	IsTfa      bool       `gorm:"column:is_tfa;type:tinyint(1);comment:是否开启 2fa" json:"is_tfa"`                                                                       // 是否开启 2fa
-	IsCopilot  bool       `gorm:"column:is_copilot;type:tinyint(1);comment:是否开启服务" json:"is_copilot"`                                                                 // 是否开启服务
-	RegisterAt *time.Time `gorm:"column:register_at;type:timestamp;index:idx_register_at,priority:1;comment:注册时间" json:"register_at"`                                 // 注册时间
-	ExpireAt   *time.Time `gorm:"column:expire_at;type:timestamp;index:idx_expire_at,priority:1;comment:过期时间" json:"expire_at"`                                       // 过期时间
-	CreatedAt  *time.Time `gorm:"column:created_at;type:timestamp;not null;index:idx_created_at,priority:1;default:CURRENT_TIMESTAMP;comment:创建时间" json:"created_at"` // 创建时间
-	UpdatedAt  *time.Time `gorm:"column:updated_at;type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"updated_at"`                                 // 更新时间
-	DeletedAt  *time.Time `gorm:"column:deleted_at;type:timestamp;comment:软删除时间" json:"deleted_at"`                                                                   // 软删除时间
+	Source     int32      `gorm:"column:source;type:int;comment:来源" json:"source"`                                                                        // 来源
+	Username   string     `gorm:"column:username;type:varchar(50);index:idx_username,priority:1;comment:登录账户" json:"username"`                            // 登录账户
+	Password   string     `gorm:"column:password;type:varchar(128);comment:加密登录密码" json:"password"`                                                       // 加密登录密码
+	IsTfa      bool       `gorm:"column:is_tfa;type:tinyint(1);comment:是否开启 2fa" json:"is_tfa"`                                                           // 是否开启 2fa
+	IsCopilot  bool       `gorm:"column:is_copilot;type:tinyint(1);comment:是否开启服务" json:"is_copilot"`                                                     // 是否开启服务
+	RegisterAt *time.Time `gorm:"column:register_at;type:timestamp;index:idx_register_at,priority:1;comment:注册时间" json:"register_at"`                     // 注册时间
+	ExpireAt   *time.Time `gorm:"column:expire_at;type:timestamp;index:idx_expire_at,priority:1;comment:过期时间" json:"expire_at"`                           // 过期时间
+	CreatedAt  *time.Time `gorm:"column:created_at;type:timestamp;not null;index:idx_created_at,priority:1;default:now();comment:创建时间" json:"created_at"` // 创建时间
+	UpdatedAt  *time.Time `gorm:"column:updated_at;type:timestamp;not null;default:now();comment:更新时间" json:"updated_at"`                                 // 更新时间
+	DeletedAt  *time.Time `gorm:"column:deleted_at;type:timestamp;comment:软删除时间" json:"deleted_at"`                                                       // 软删除时间
 }
 
 // TableName GithubAccount's table name

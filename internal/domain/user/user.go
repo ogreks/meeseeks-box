@@ -14,6 +14,8 @@ import (
 	"gorm.io/gorm"
 )
 
+var _ UDomain = (*User)(nil)
+
 type UDomain interface {
 	CreateUser(ctx context.Context, account model.Account, user model.User) error
 	CreatePlatformAccount(ctx context.Context, account model.Account, accountConnect model.AccountConnect, user model.User) error

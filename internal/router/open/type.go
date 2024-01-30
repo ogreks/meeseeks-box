@@ -8,5 +8,7 @@ import (
 
 func Register(r *gin.Engine, db orm.Repo, logger *zap.Logger) {
 	p := NewPlatformRouter(db, logger)
+	n := NewNotifyRouter(db, logger)
 	p.Register(r)
+	n.Register(r)
 }

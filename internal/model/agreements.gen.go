@@ -13,15 +13,15 @@ const TableNameAgreement = "agreements"
 // Agreement 协议表
 type Agreement struct {
 	ID          int64      `gorm:"column:id;type:bigint;primaryKey;autoIncrement:true" json:"id"`
-	AgreementNo string     `gorm:"column:agreement_no;type:varchar(32);not null;uniqueIndex:unx_agreement_no,priority:1;comment:协议编号" json:"agreement_no"` // 协议编号
-	Type        int32      `gorm:"column:type;type:int;not null;comment:协议类型" json:"type"`                                                                 // 协议类型
-	Title       string     `gorm:"column:title;type:varchar(50);not null;index:idx_title,priority:1;comment:协议标题" json:"title"`                            // 协议标题
-	Content     string     `gorm:"column:content;type:text;comment:协议内容" json:"content"`                                                                   // 协议内容
-	Status      uint32     `gorm:"column:status;type:tinyint unsigned;not null;comment:协议状态 1已发布 2草稿" json:"status"`                                       // 协议状态 1已发布 2草稿
-	Version     string     `gorm:"column:version;type:varchar(50);comment:协议版本号" json:"version"`                                                           // 协议版本号
-	PublishAt   *time.Time `gorm:"column:publish_at;type:timestamp;index:idx_publish_at,priority:1;comment:发布时间" json:"publish_at"`                        // 发布时间
-	CreatedAt   *time.Time `gorm:"column:created_at;type:timestamp;not null;index:idx_created_at,priority:1;default:now();comment:创建时间" json:"created_at"` // 创建时间
-	UpdatedAt   *time.Time `gorm:"column:updated_at;type:timestamp;not null;default:now();comment:更新时间" json:"updated_at"`                                 // 更新时间
+	AgreementNo string     `gorm:"column:agreement_no;type:varchar(32);not null;uniqueIndex:unx_agreement_no,priority:1;comment:协议编号" json:"agreement_no"`             // 协议编号
+	Type        int32      `gorm:"column:type;type:int;not null;comment:协议类型" json:"type"`                                                                             // 协议类型
+	Title       string     `gorm:"column:title;type:varchar(50);not null;index:idx_title,priority:1;comment:协议标题" json:"title"`                                        // 协议标题
+	Content     string     `gorm:"column:content;type:text;comment:协议内容" json:"content"`                                                                               // 协议内容
+	Status      uint32     `gorm:"column:status;type:tinyint unsigned;not null;comment:协议状态 1已发布 2草稿" json:"status"`                                                   // 协议状态 1已发布 2草稿
+	Version     string     `gorm:"column:version;type:varchar(50);comment:协议版本号" json:"version"`                                                                       // 协议版本号
+	PublishAt   *time.Time `gorm:"column:publish_at;type:timestamp;index:idx_publish_at,priority:1;comment:发布时间" json:"publish_at"`                                    // 发布时间
+	CreatedAt   *time.Time `gorm:"column:created_at;type:timestamp;not null;index:idx_created_at,priority:1;default:CURRENT_TIMESTAMP;comment:创建时间" json:"created_at"` // 创建时间
+	UpdatedAt   *time.Time `gorm:"column:updated_at;type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"updated_at"`                                 // 更新时间
 	DeletedAt   *time.Time `gorm:"column:deleted_at;type:timestamp" json:"deleted_at"`
 }
 

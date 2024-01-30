@@ -33,7 +33,7 @@ func (h *handle) CreateSessionKey(ctx *gin.Context) {
 		return
 	}
 
-	err := h.service.SaveSessionKeys(
+	err := h.platform.SaveSessionKeys(
 		ctx.Request.Context(),
 		&platform.SessionKeysReq{
 			Name:      r.Name,
@@ -83,7 +83,7 @@ func (h *handle) UpdateSessionKey(ctx *gin.Context) {
 		return
 	}
 
-	err := h.service.SaveSessionKeys(
+	err := h.platform.SaveSessionKeys(
 		ctx.Request.Context(),
 		&platform.SessionKeysReq{
 			SessionNo: sessionNo.SessionNo,
@@ -136,7 +136,7 @@ func (h *handle) SessionKeysSetStatus(ctx *gin.Context) {
 		return
 	}
 
-	total, err := h.service.SetStatusSessionKeys(
+	total, err := h.platform.SetStatusSessionKeys(
 		ctx.Request.Context(),
 		uint32(status),
 		r.SessionNoSlice...,
@@ -186,7 +186,7 @@ func (h *handle) SessionsKeysList(ctx *gin.Context) {
 		return
 	}
 
-	resp, err := h.service.SessionsKeysPaginate(ctx.Request.Context(), platform.SessionKeysPaginateReq{
+	resp, err := h.platform.SessionsKeysPaginate(ctx.Request.Context(), platform.SessionKeysPaginateReq{
 		PaginateReq: service.PaginateReq{
 			Limit: r.Limit,
 			Page:  r.Page,

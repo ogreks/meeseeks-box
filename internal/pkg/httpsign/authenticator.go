@@ -25,7 +25,7 @@ type Authenticator struct {
 	secrets    *Secrets
 	validators []validator.Validator
 	headers    []string
-	encryptKey EncryptionKey
+	encryptKey EncryptionKey // TODO 需要实时变更
 }
 
 type Option func(*Authenticator)

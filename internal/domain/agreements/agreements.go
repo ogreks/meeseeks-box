@@ -13,6 +13,8 @@ import (
 	"time"
 )
 
+var _ AGreementDomain = (*AGreements)(nil)
+
 type AGreementDomain interface {
 	i()
 
@@ -30,6 +32,10 @@ type AGreementDomain interface {
 	Agreement(ctx context.Context, where ...gen.Condition) (*model.Agreement, error)
 	// AgreementVersion get agreement version detail
 	AgreementVersion(ctx context.Context, where ...gen.Condition) (*model.AgreementVersion, error)
+	// AgreementVersionNew get agreement new version detail
+	AgreementVersionNew(ctx context.Context, where ...gen.Condition) (*model.AgreementVersion, error)
+	// AgreementDelete batch delete agreement
+	AgreementDelete(ctx context.Context, where ...gen.Condition) (int64, error)
 }
 
 type AGreements struct {
@@ -45,6 +51,10 @@ func NewAGreements(repo orm.Repo, log *zap.Logger) *AGreements {
 }
 
 func (ag *AGreements) i() {}
+
+func (ag *AGreements) CreateAGreementVersion(ctx context.Context, agv model.AgreementVersion) error {
+	return ag.dao.AgreementVersion.WithContext(ctx).Create(&agv)
+}
 
 // SaveAGreement create agreement or publish agreement
 func (ag *AGreements) SaveAGreement(ctx context.Context, agreements model.Agreement) error {
@@ -145,4 +155,27 @@ func (ag *AGreements) AgreementVersion(ctx context.Context, where ...gen.Conditi
 	}
 
 	return v, e
+}
+
+// AgreementVersionNew get agreement new version detail
+func (ag *AGreements) AgreementVersionNew(ctx context.Context, where ...gen.Condition) (*model.AgreementVersion, error) {
+	v, e := ag.dao.WithContext(ctx).AgreementVersion.
+		Order(dao.Agreement.CreatedAt.Desc(), dao.Agreement.Version.Desc()).
+		Where(where...).
+		First()
+	if errors.Is(e, gorm.ErrRecordNotFound) {
+		e = domain.NotFound
+	}
+
+	return v, e
+}
+
+// AgreementDelete batch delete agreement
+func (ag *AGreements) AgreementDelete(ctx context.Context, where ...gen.Condition) (int64, error) {
+	result, err := ag.dao.Agreement.WithContext(ctx).Where(where...).Delete()
+	if err != nil {
+		return 0, err
+	}
+
+	return result.RowsAffected, result.Error
 }

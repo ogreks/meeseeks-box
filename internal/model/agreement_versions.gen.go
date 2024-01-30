@@ -4,18 +4,22 @@
 
 package model
 
+import (
+	"time"
+)
+
 const TableNameAgreementVersion = "agreement_versions"
 
 // AgreementVersion 协议发布历史表
 type AgreementVersion struct {
-	ID          int64  `gorm:"column:id;type:bigint;primaryKey;autoIncrement:true" json:"id"`
-	AgreementNo string `gorm:"column:agreement_no;type:varchar(32);not null;index:idx_agreement_no,priority:1;comment:协议编号" json:"agreement_no"` // 协议编号
-	Type        int32  `gorm:"column:type;type:int;not null;comment:协议类型" json:"type"`                                                           // 协议类型
-	Title       string `gorm:"column:title;type:varchar(50);not null;comment:协议标题" json:"title"`                                                 // 协议标题
-	Content     string `gorm:"column:content;type:text;not null;comment:协议内容" json:"content"`                                                    // 协议内容
-	Version     string `gorm:"column:version;type:varchar(50);comment:协议版本号" json:"version"`                                                     // 协议版本号
-	CreatedAt   string `gorm:"column:created_at;type:varchar(50);not null;index:idx_created_at,priority:1;comment:协议发布时间" json:"created_at"`     // 协议发布时间
-	DeletedAt   string `gorm:"column:deleted_at;type:varchar(50)" json:"deleted_at"`
+	ID          int64      `gorm:"column:id;type:bigint;primaryKey;autoIncrement:true" json:"id"`
+	AgreementNo string     `gorm:"column:agreement_no;type:varchar(32);not null;index:idx_agreement_no,priority:1;comment:协议编号" json:"agreement_no"`                     // 协议编号
+	Type        int32      `gorm:"column:type;type:int;not null;comment:协议类型" json:"type"`                                                                               // 协议类型
+	Title       string     `gorm:"column:title;type:varchar(50);not null;comment:协议标题" json:"title"`                                                                     // 协议标题
+	Content     string     `gorm:"column:content;type:text;not null;comment:协议内容" json:"content"`                                                                        // 协议内容
+	Version     string     `gorm:"column:version;type:varchar(50);comment:协议版本号" json:"version"`                                                                         // 协议版本号
+	CreatedAt   *time.Time `gorm:"column:created_at;type:timestamp;not null;index:idx_created_at,priority:1;default:CURRENT_TIMESTAMP;comment:协议发布时间" json:"created_at"` // 协议发布时间
+	DeletedAt   *time.Time `gorm:"column:deleted_at;type:timestamp" json:"deleted_at"`
 }
 
 // TableName AgreementVersion's table name
